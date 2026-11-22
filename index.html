@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Desain Tampilan Danarakca</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: kanvas netral berisi bingkai mockup (desktop, proyektor 16:9, HP) yang diskalakan agar muat lebar layar. Setiap bingkai punya tema UI gelap/terang sendiri. */
+:root{
+  --cv-bg:#E9EDF1; --cv-ink:#18222E; --cv-muted:#566273; --cv-line:#CBD3DC; --cv-chip:#FFFFFF; --cv-sel:#0C1F35; --cv-sel-ink:#FFFFFF;
+  --f-display:"Oxanium","Plus Jakarta Sans",system-ui,sans-serif;
+  --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"Oxanium",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  /* kartu skenario = "kartu fisik", selalu terang di kedua tema */
+  --k-bg:#FFFFFF; --k-ink:#0F1B2A; --k-muted:#55657A; --k-line:#DCE3EB; --k-soft:#F3F6FA;
+  --k-up:#13834F; --k-down:#D23B40;
+  --k-sukuk:#14875E; --k-saham:#2F6FDE; --k-rdpu:#6B7688; --k-emas:#B8860B; --k-camp:#7C4DDB;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--cv-bg:#13171C;--cv-ink:#E6EBF1;--cv-muted:#9AA6B5;--cv-line:#2C3540;--cv-chip:#1C232B;--cv-sel:#E2B33C;--cv-sel-ink:#1B1400;color-scheme:dark}}
+:root[data-theme="dark"]{--cv-bg:#13171C;--cv-ink:#E6EBF1;--cv-muted:#9AA6B5;--cv-line:#2C3540;--cv-chip:#1C232B;--cv-sel:#E2B33C;--cv-sel-ink:#1B1400;color-scheme:dark}
+
+/* ===== token UI Danarakca: gelap & terang ===== */
+.ui[data-ui="dark"]{
+  --u-bg:#081627; --u-band:#0C1F35; --u-surface:#0F2440; --u-surface-2:#14304F; --u-ink:#ECF2F9; --u-muted:#9DB0C7; --u-line:#22426A;
+  --u-band-ink:#FFFFFF; --u-band-muted:#B9C7D8; --u-band-line:#2A4A70;
+  --u-gold:#E2B33C; --u-gold-text:#F0C350; --u-on-gold:#1B1400;
+  --u-up:#46D693; --u-down:#FF7A7E; --u-input:#0B1D33; --u-input-line:#2E4F78; --u-track:#1E3A5C;
+  --u-bench-bg:#0F3A2B; --u-bench-ink:#8FE6BC; --u-bench-line:#1E5A42;
+  --u-err-bg:#3A1518; --u-err-ink:#FFB4B7; --u-err-line:#6A2A2F;
+  --u-me:#2A2410;
+  --c-sukuk:#3FC48C; --c-saham:#6EA0FF; --c-rdpu:#A3AFC0; --c-emas:#E7B93D; --c-camp:#B08CFF;
+  --t1:#E2B33C; --t2:#5EB1FF; --t3:#3FC48C; --t4:#FF8FA3; --t5:#B79BFF; --t6:#9DB0C7;
+  --g-grid:#1F3B5E; --g-tick:#9DB0C7;
+  color-scheme:dark;
+}
+.ui[data-ui="light"]{
+  --u-bg:#F3F6FA; --u-band:#FFFFFF; --u-surface:#FFFFFF; --u-surface-2:#EEF2F7; --u-ink:#0F1B2A; --u-muted:#55657A; --u-line:#DCE3EB;
+  --u-band-ink:#0C1F35; --u-band-muted:#4D5E73; --u-band-line:#D3DBE5;
+  --u-gold:#E2B33C; --u-gold-text:#8A6400; --u-on-gold:#1B1400;
+  --u-up:#13834F; --u-down:#D23B40; --u-input:#FFFFFF; --u-input-line:#C3CDD9; --u-track:#E3E8EE;
+  --u-bench-bg:#E8F5EF; --u-bench-ink:#0D5A3D; --u-bench-line:#BFE3D2;
+  --u-err-bg:#FDECEC; --u-err-ink:#9B1C22; --u-err-line:#F3C2C4;
+  --u-me:#FFF6DB;
+  --c-sukuk:#14875E; --c-saham:#2F6FDE; --c-rdpu:#6B7688; --c-emas:#B8860B; --c-camp:#7C4DDB;
+  --t1:#B8860B; --t2:#2F6FDE; --t3:#14875E; --t4:#C2366F; --t5:#7C4DDB; --t6:#6B7688;
+  --g-grid:#E3E8EE; --g-tick:#55657A;
+  color-scheme:light;
+}
+.ui{background:var(--u-bg);color:var(--u-ink)}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--cv-bg);color:var(--cv-ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.wrap{max-width:1680px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+.cv-head{display:flex;flex-wrap:wrap;gap:16px 40px;align-items:flex-end;justify-content:space-between}
+.cv-head h1{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.cv-head p{margin:8px 0 0;color:var(--cv-muted);max-width:64ch}
+.cv-tools{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.seg{display:inline-flex;border:1px solid var(--cv-line);border-radius:12px;padding:3px;background:var(--cv-chip);gap:3px}
+.seg span{font-size:12px;font-weight:700;color:var(--cv-muted);padding:0 8px;align-self:center}
+.seg button{border:0;background:none;color:var(--cv-ink);font-weight:700;font-size:13px;padding:8px 14px;border-radius:9px;min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--cv-sel);color:var(--cv-sel-ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--cv-chip);border:1px solid var(--cv-line)}
+.legend i{width:9px;height:9px;border-radius:50%;display:block}
+section.board{display:flex;flex-direction:column;gap:16px;min-width:0}
+.board-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.board-head h2{font-family:var(--f-display);font-size:22px;font-weight:700;margin:0}
+.board-head small{color:var(--cv-muted);font-size:13px}
+.scaler{position:relative;width:100%;overflow:hidden}
+.scaler>.frame{position:absolute;top:0;left:0;transform-origin:0 0}
+.frame{box-shadow:0 1px 2px rgba(0,0,0,.08),0 18px 40px -18px rgba(10,25,45,.35)}
+.phones{display:flex;flex-wrap:wrap;gap:28px}
+.phone-col{display:flex;flex-direction:column;gap:10px;min-width:0;flex:1 1 250px;max-width:390px}
+.phone-col .cap{font-size:13px;color:var(--cv-muted);min-height:40px}
+.phone-col .cap b{color:var(--cv-ink)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.note{background:var(--cv-chip);border:1px solid var(--cv-line);border-radius:12px;padding:16px 18px;font-size:13.5px}
+.note h3{margin:0 0 6px;font-size:15px;font-family:var(--f-display)}
+.note p{margin:0;color:var(--cv-muted)}
+
+/* ====== komponen bersama ====== */
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-weight:700}
+.mark{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;letter-spacing:.01em}
+.mark svg{flex:none}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #E2B33C;outline-offset:2px}
+.themebtn{width:40px;height:40px;border-radius:10px;border:1px solid var(--u-band-line);background:transparent;color:var(--u-band-ink);display:inline-flex;align-items:center;justify-content:center}
+.ui[data-ui="dark"] .i-sun{display:none} .ui[data-ui="light"] .i-moon{display:none}
+
+/* Kartu skenario (elemen khas) */
+.scard{background:var(--k-bg);color:var(--k-ink);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--k-line);box-shadow:0 10px 30px -16px rgba(5,15,30,.45)}
+.scard .band{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px 10px 18px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-family:var(--f-display)}
+.scard .band .right{display:flex;align-items:center;gap:10px}
+.scard .band .num{letter-spacing:.02em;font-size:13px;opacity:.95}
+.why-btn{width:32px;height:32px;border-radius:50%;border:2px solid #fff;background:#E2B33C;color:#1B1400;font-family:var(--f-display);font-weight:800;font-size:18px;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:none;padding:0}
+.why-btn[aria-expanded="false"]{animation:nudge 2.4s ease-in-out infinite}
+.why-btn[aria-expanded="true"]{background:#fff;color:#0C1F35}
+@keyframes nudge{0%,80%,100%{transform:scale(1)}88%{transform:scale(1.18)}}
+@media (prefers-reduced-motion:reduce){.why-btn{animation:none!important}}
+.scard .body{padding:16px 20px 14px;display:flex;flex-direction:column;gap:10px}
+.scard h3{font-family:var(--f-display);font-weight:800;margin:0;line-height:1.05;letter-spacing:-.005em;text-wrap:balance}
+.scard .narr{margin:0;color:#2A3A4E}
+.scard .hint{margin:0;font-size:12.5px;color:var(--k-muted);display:flex;align-items:center;gap:6px}
+.reasons{display:flex;flex-direction:column;gap:0;border-top:1px dashed var(--k-line);padding-top:6px}
+.reasons div{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:7px 0;border-top:1px solid #EEF1F5;align-items:start}
+.reasons div:first-child{border-top:0}
+.reasons .rh{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.9em;white-space:nowrap}
+.reasons .rh i{width:9px;height:9px;border-radius:2px;display:block}
+.reasons .rv{font-family:var(--f-num);font-weight:700;font-size:.9em}
+.reasons p{grid-column:1/-1;margin:0;font-size:.86em;color:#3B4A5C;line-height:1.45}
+.impact{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--k-line);margin-top:auto}
+.impact div{padding:9px 4px 11px;text-align:center;display:flex;flex-direction:column;gap:1px;border-left:1px solid var(--k-line)}
+.impact div:first-child{border-left:0}
+.impact .lab{font-size:11px;font-weight:600;color:var(--k-muted);display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.impact .lab i{width:8px;height:8px;border-radius:2px;display:block}
+.impact .val{font-family:var(--f-num);font-weight:700;font-size:15px}
+.k-up{color:var(--k-up)} .k-down{color:var(--k-down)}
+.up{color:var(--u-up)} .down{color:var(--u-down)}
+
+/* ====== 1. LANDING ====== */
+.landing{width:1280px;border-radius:14px;overflow:hidden}
+.browser{height:40px;background:#E3E8EE;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid #D3DBE5}
+.browser i{width:11px;height:11px;border-radius:50%;background:#C4CCD6;display:block}
+.browser span{margin-left:16px;flex:1;max-width:420px;height:24px;border-radius:7px;background:#fff;font-size:12px;color:#55657A;display:flex;align-items:center;padding:0 12px}
+.l-nav{display:flex;justify-content:space-between;align-items:center;padding:18px 64px;background:var(--u-band);color:var(--u-band-ink);border-bottom:1px solid var(--u-band-line)}
+.l-nav .mark{font-size:24px}
+.l-nav .org{font-size:12px;color:var(--u-band-muted);font-weight:500;font-family:var(--f-body);letter-spacing:0;display:block}
+.l-nav .navr{display:flex;gap:10px;align-items:center}
+.l-nav a{color:var(--u-band-ink);font-size:14px;font-weight:600;text-decoration:none;padding:9px 16px;border:1px solid var(--u-band-line);border-radius:10px}
+.l-hero{background:var(--u-band);color:var(--u-band-ink);padding:40px 64px 72px;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.l-hero .eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--u-gold-text);font-family:var(--f-display)}
+.l-hero h1{font-family:var(--f-display);font-weight:800;font-size:66px;line-height:.98;letter-spacing:-.02em;margin:14px 0 18px}
+.l-hero h1 em{font-style:normal;color:var(--u-gold-text)}
+.l-hero p{font-size:17px;color:var(--u-band-muted);max-width:50ch;margin:0}
+.l-cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 24px;border-radius:12px;font-weight:700;font-size:16px;border:0;text-decoration:none;font-family:var(--f-display);letter-spacing:.02em}
+.btn-gold{background:var(--u-gold);color:var(--u-on-gold)}
+.btn-ghost{background:transparent;color:var(--u-band-ink);border:1px solid var(--u-band-line)}
+.l-stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:40px;border-top:1px solid var(--u-band-line)}
+.l-stats div{padding:16px 16px 0 0}
+.l-stats b{display:block;font-family:var(--f-display);font-size:38px;font-weight:800;line-height:1}
+.l-stats span{font-size:13px;color:var(--u-band-muted)}
+.hero-vis{position:relative;height:440px}
+.vis-chart{position:absolute;inset:0 0 120px 0;background:var(--u-surface-2);border:1px solid var(--u-band-line);border-radius:18px;padding:20px 22px}
+.vis-chart h4{margin:0;font-size:13px;color:var(--u-band-muted);font-weight:600}
+.vis-chart .k{display:flex;gap:18px;margin-top:6px;font-size:12px;color:var(--u-band-muted)}
+.vis-chart .k b{font-family:var(--f-num);color:var(--u-band-ink);font-size:15px}
+.vis-chart .k i{display:inline-block;width:10px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.vis-card{position:absolute;left:28px;bottom:0;width:300px;transform:rotate(-2.5deg)}
+.vis-card .scard h3{font-size:24px}
+.vis-card.back{left:96px;bottom:22px;transform:rotate(4deg);opacity:.7}
+.l-sec{padding:64px;background:var(--u-bg)}
+.l-sec h2{font-family:var(--f-display);font-size:44px;font-weight:800;margin:0;line-height:1}
+.l-sec .lead{color:var(--u-muted);margin:0;max-width:46ch;font-size:16px}
+.assets{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.asset p{margin:0;font-size:13.5px;color:var(--u-muted)}
+.risk{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--u-muted);margin-top:auto}
+.risk .bars{display:flex;gap:3px}
+.risk .bars i{width:14px;height:6px;border-radius:2px;background:var(--u-track);display:block}
+.l-foot{background:var(--u-band);color:var(--u-band-muted);font-size:13px;padding:24px 64px;display:flex;justify-content:space-between;border-top:1px solid var(--u-band-line)}
+
+
+/* landing: cara bermain & aset (revisi) */
+.board-bg{background-color:var(--u-bg);background-image:radial-gradient(var(--u-line) 1.2px,transparent 1.2px);background-size:24px 24px}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+.sec-head .lead{margin:0}
+.l-stats div{display:flex;flex-direction:column;gap:6px}
+.l-stats svg{color:var(--u-gold-text)}
+.howto{list-style:none;margin:0;padding:0;position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
+.howto::before{content:"";position:absolute;left:10%;right:10%;top:46px;border-top:3px dashed var(--u-input-line)}
+.stage{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+.node{width:92px;height:92px;border-radius:26px;background:var(--u-surface);border:2.5px solid var(--sc);color:var(--sc);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 0 8px var(--u-bg),0 14px 28px -12px var(--sc)}
+.node.goal{background:var(--u-gold);border-color:var(--u-gold);color:#1B1400;border-radius:50%}
+.node .lv{position:absolute;top:-12px;right:-12px;min-width:32px;height:32px;padding:0 8px;border-radius:999px;background:var(--sc);color:#fff;font-family:var(--f-display);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;border:3px solid var(--u-bg)}
+.stage h3{font-family:var(--f-display);font-size:21px;font-weight:800;margin:10px 0 0;line-height:1.1}
+.stage p{margin:0;font-size:14px;color:var(--u-muted);max-width:24ch}
+.mini{margin-top:6px;width:100%;max-width:210px;background:var(--u-surface);border:1px solid var(--u-line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:12px;text-align:left}
+.mini .fake{display:block;border:1px solid var(--u-input-line);border-radius:8px;padding:5px 8px;color:var(--u-ink);font-weight:600}
+.mini-cap{font-family:var(--f-num);color:var(--u-muted);text-align:center}
+.mini-card{background:#fff;color:#0F1B2A;border-color:#DCE3EB;padding:0;overflow:hidden;gap:4px}
+.mini-card .mc-band{background:#B4282E;color:#fff;font-family:var(--f-display);font-weight:700;font-size:10.5px;letter-spacing:.08em;padding:5px 10px}
+.mini-card b{font-family:var(--f-display);font-size:15px;padding:0 10px}
+.mini-card .mc-row{display:flex;justify-content:space-between;padding:0 10px 8px;font-family:var(--f-num);font-weight:700}
+.tahap{display:flex;align-items:center;justify-content:center;gap:6px}
+.tahap i{font-style:normal;font-family:var(--f-display);font-weight:800;padding:4px 10px;border-radius:8px;border:1.5px solid var(--u-input-line);color:var(--u-muted)}
+.tahap i.on{background:var(--c-sukuk);border-color:var(--c-sukuk);color:#fff}
+.tahap em{font-style:normal;color:var(--u-muted)}
+.podium{flex-direction:row;justify-content:space-between;align-items:center;font-weight:700;border-color:var(--u-gold)}
+.podium b{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--u-gold);color:#1B1400;align-items:center;justify-content:center;margin-right:6px;font-family:var(--f-display)}
+.asset{border-radius:16px;padding:18px;background:var(--u-surface);border:1px solid var(--u-line);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.asset::after{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--ac)}
+.a-top{display:flex;justify-content:space-between;align-items:center}
+.a-ico{width:48px;height:48px;border-radius:14px;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center}
+.a-type{font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.06em;color:var(--ac);border:1.5px solid var(--ac);border-radius:999px;padding:3px 10px}
+.asset h3{margin:4px 0 0;font-family:var(--f-display);font-size:21px;font-weight:800}
+.spark{width:100%;height:48px;display:block}
+.spark polyline{fill:none;stroke:var(--ac);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.asset .risk{font-weight:600}
+.asset .risk .bars i.f{background:var(--ac)}
+
+/* ====== 2. PROYEKTOR ====== */
+.proj{width:1600px;height:900px;border-radius:14px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;font-size:16px}
+.pj-top{display:flex;align-items:center;gap:24px;padding:16px 28px;background:var(--u-band);color:var(--u-band-ink);border-bottom:1px solid var(--u-band-line)}
+.pj-top .mark{font-size:26px}
+.pj-kpis{display:flex;margin-right:auto}
+.pj-kpi{padding:0 20px;border-left:1px solid var(--u-band-line);display:flex;flex-direction:column}
+.pj-kpi small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--u-band-muted);font-weight:700;font-family:var(--f-display)}
+.pj-kpi b{font-family:var(--f-display);font-size:26px;font-weight:700;line-height:1.15}
+.pj-kpi .dim{color:var(--u-band-muted);font-size:18px}
+.pj-kpi .ok{color:var(--u-up);font-size:13px;font-weight:600}
+.pj-actions{display:flex;gap:10px;align-items:center}
+.pbtn{height:46px;padding:0 16px;border-radius:11px;border:1px solid var(--u-band-line);background:var(--u-surface-2);color:var(--u-ink);font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+.pbtn.go{background:var(--u-gold);color:var(--u-on-gold);border-color:var(--u-gold);font-size:17px;padding:0 22px;height:54px;font-family:var(--f-display);letter-spacing:.03em}
+.pj-main{display:grid;grid-template-columns:560px 1fr 480px;gap:20px;padding:20px 24px 24px;min-height:0}
+.pj-col{display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0}
+.pj-panel{background:var(--u-surface);border:1px solid var(--u-line);border-radius:16px;padding:16px 20px;min-width:0}
+.pj-panel h4{margin:0 0 10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--u-muted);font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--f-display)}
+.pj-panel h4 span{letter-spacing:0;text-transform:none;font-weight:500;font-family:var(--f-body)}
+.proj .scard{flex:1;min-height:0}
+.proj .scard .body{flex:1;gap:12px;padding:20px 24px 16px;min-height:0;overflow:auto}
+.proj .scard h3{font-size:42px}
+.proj .scard .narr{font-size:19px}
+.proj .reasons{font-size:15.5px}
+.proj .impact .val{font-size:21px}
+.proj .impact .lab{font-size:12px}
+.flip{animation:flip .55s cubic-bezier(.3,.7,.3,1)}
+@keyframes flip{0%{transform:perspective(1200px) rotateY(80deg);opacity:.2}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.flip{animation:none}}
+.lb-panel{flex:1;display:flex;flex-direction:column;min-height:0}
+.lb-scroll{flex:1;min-height:0;overflow-y:auto;border-radius:10px;scrollbar-width:thin;scrollbar-color:var(--u-line) transparent}
+.lb{width:100%;border-collapse:collapse;font-size:16px}
+.lb thead th{position:sticky;top:0;background:var(--u-surface);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--u-muted);text-align:left;padding:6px;font-family:var(--f-display);z-index:1;border-bottom:1px solid var(--u-line)}
+.lb thead th.rt{text-align:right}
+.lb td{padding:10px 6px;border-top:1px solid var(--u-line)}
+.lb tbody tr:first-child td{border-top:0}
+.lb .rk{width:40px;font-family:var(--f-num);font-weight:700;color:var(--u-muted)}
+.lb tr.top .rk{color:var(--u-gold-text)}
+.lb tr.top .nm{font-weight:700}
+.lb .mv{width:44px;font-family:var(--f-num);font-size:13px;font-weight:700}
+.lb .nm{font-weight:600}
+.lb .v{text-align:right;font-family:var(--f-num);font-weight:700}
+.lb .r{text-align:right;font-family:var(--f-num);font-size:13px;width:74px;font-weight:600}
+.lb tr.cut td{border-top:2px dashed var(--u-gold)}
+.lb tr.me td{background:var(--u-me)}
+.lb-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:var(--u-muted)}
+.lb-foot button{height:36px;border-radius:9px;border:1px solid var(--u-line);background:var(--u-surface-2);color:var(--u-ink);font-weight:700;font-size:13px;padding:0 12px;display:inline-flex;align-items:center;gap:6px}
+.flat{color:var(--u-muted)}
+.chart-box svg{display:block;width:100%;height:auto}
+.chart-key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--u-muted);margin-top:8px}
+.chart-key span{display:inline-flex;align-items:center;gap:6px}
+.chart-key i{width:14px;height:3px;border-radius:2px;display:block}
+.chart-key b{color:var(--u-ink);font-family:var(--f-num)}
+.hist div{display:grid;grid-template-columns:44px 1fr auto;gap:10px;padding:7px 0;border-top:1px solid var(--u-line);align-items:center;font-size:14px}
+.hist div:first-child{border-top:0}
+.hist .q{font-family:var(--f-num);color:var(--u-muted);font-size:13px}
+.hist .s{font-family:var(--f-num);font-weight:700;font-size:13px}
+.join{display:flex;gap:16px;align-items:center}
+.qr{width:92px;height:92px;background:#fff;border-radius:10px;padding:7px;flex:none;border:1px solid var(--u-line)}
+.join b{font-family:var(--f-display);font-size:22px;color:var(--u-gold-text);letter-spacing:.04em}
+.join p{margin:2px 0 0;color:var(--u-muted);font-size:13px}
+.join small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--u-muted);font-weight:700;font-family:var(--f-display)}
+
+/* ====== 3. HP ====== */
+.phone{width:390px;height:844px;border-radius:44px;overflow:hidden;border:10px solid #10161E;display:flex;flex-direction:column;font-size:15px}
+.ph-head{background:var(--u-band);color:var(--u-band-ink);padding:20px 18px 16px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid var(--u-band-line)}
+.ph-head .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ph-head .mark{font-size:19px}
+.ph-pill{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--u-surface-2);color:var(--u-band-ink);border:1px solid var(--u-band-line)}
+.ph-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin}
+.ph-foot{padding:14px 16px 20px;border-top:1px solid var(--u-line);background:var(--u-bg)}
+.ph-btn{width:100%;height:54px;border-radius:14px;border:0;background:var(--u-gold);color:var(--u-on-gold);font-weight:800;font-size:17px;font-family:var(--f-display);letter-spacing:.03em}
+.ph-btn[disabled]{background:var(--u-track);color:var(--u-muted);cursor:not-allowed}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:700}
+.field input{height:52px;border-radius:12px;border:1.5px solid var(--u-input-line);background:var(--u-input);padding:0 14px;font:inherit;font-size:16px;color:var(--u-ink)}
+.field input.bad{border-color:var(--u-down)}
+.field .hint{font-size:12px;color:var(--u-muted)}
+.dup{background:var(--u-err-bg);color:var(--u-err-ink);border:1px solid var(--u-err-line);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:8px}
+.dup .chips{display:flex;flex-wrap:wrap;gap:6px}
+.dup .chips button{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--u-input-line);background:var(--u-surface);color:var(--u-ink);font-weight:700;font-size:13px}
+.ok-note{font-size:12.5px;font-weight:700;color:var(--u-up)}
+.ok-note.warn{color:var(--u-gold-text)}
+.login-hero{padding:30px 20px 26px;background:var(--u-band);color:var(--u-band-ink);display:flex;flex-direction:column;gap:12px;border-bottom:1px solid var(--u-band-line)}
+.login-hero h2{font-family:var(--f-display);font-weight:800;font-size:34px;line-height:1;margin:0}
+.login-hero p{margin:0;color:var(--u-band-muted);font-size:14px}
+.mini-assets{display:flex;gap:6px}
+.mini-assets i{flex:1;height:6px;border-radius:3px;display:block}
+.alloc-total{display:flex;flex-direction:column;gap:8px}
+.alloc-total .row{display:flex;justify-content:space-between;align-items:baseline}
+.alloc-total .row b{font-size:24px}
+.stack{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--u-track)}
+.stack i{display:block;height:100%;transition:width .2s}
+.presets{display:flex;gap:8px}
+.presets button{flex:1;height:38px;border-radius:10px;border:1px solid var(--u-input-line);background:var(--u-surface);font-weight:700;font-size:13px;color:var(--u-ink)}
+.autonote{font-size:12px;color:var(--u-muted);display:flex;gap:6px;align-items:center}
+.slider{display:grid;grid-template-columns:1fr auto;gap:0 10px;align-items:center;background:var(--u-surface);border:1px solid var(--u-line);border-radius:12px;padding:8px 12px 6px}
+.slider label{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
+.slider label i{width:10px;height:10px;border-radius:3px;display:block}
+.slider .pct{font-family:var(--f-num);font-weight:700;font-size:17px}
+.slider .rp{grid-column:1/-1;font-size:12px;color:var(--u-muted)}
+.slider input[type=range]{grid-column:1/-1;width:100%;margin:2px 0;height:24px}
+.phone .scard h3{font-size:26px}
+.phone .scard .narr{font-size:14px}
+.phone .scard .body{padding:14px 16px 12px}
+.phone .reasons{font-size:14px}
+.phone .impact .val{font-size:13px}
+.phone .impact .lab{font-size:10px}
+.mine{background:var(--u-surface);border:1px solid var(--u-line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.mine h4{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--u-muted);font-family:var(--f-display)}
+.mine .big{display:flex;justify-content:space-between;align-items:baseline}
+.mine .big b{font-size:24px}
+.contrib div{display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid var(--u-line);font-size:13.5px}
+.contrib div:first-child{border-top:0}
+.contrib span{display:flex;align-items:center;gap:8px}
+.contrib i{width:8px;height:8px;border-radius:2px;display:block}
+.rankcard{background:#0C1F35;color:#fff;border-radius:18px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:2px 16px;align-items:center;border:1px solid #2A4A70}
+.rankcard .pos{font-family:var(--f-display);font-weight:800;font-size:58px;line-height:.9;grid-row:span 2}
+.rankcard .pos small{font-size:18px;color:#A9BBD0;font-weight:600}
+.rankcard .val{font-family:var(--f-num);font-size:26px;font-weight:700}
+.rankcard .sub{font-size:13px;color:#C9D6E5}
+.kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi3 div{background:var(--u-surface);border:1px solid var(--u-line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
+.kpi3 small{font-size:11px;color:var(--u-muted);font-weight:600}
+.kpi3 b{font-size:17px}
+.bench{display:flex;justify-content:space-between;align-items:center;font-size:13px;background:var(--u-bench-bg);border:1px solid var(--u-bench-line);color:var(--u-bench-ink);border-radius:12px;padding:10px 12px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--u-line);background:var(--u-surface)}
+.tabs button{border:0;background:none;padding:10px 0 16px;font-size:11.5px;font-weight:700;color:var(--u-muted);display:flex;flex-direction:column;align-items:center;gap:4px}
+.tabs button[aria-current="page"]{color:var(--u-ink)}
+.tabs button[aria-current="page"] svg{color:var(--u-gold-text)}
+.wait{font-size:12.5px;color:var(--u-muted);display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--u-up);display:block;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+.myrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--u-me);border:1px solid var(--u-gold);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--u-ink)}
+.myrow .num{font-size:15px}
+.phone .lb{font-size:14px}
+.phone .lb td{padding:9px 4px}
+.phone .lb .r{width:60px;font-size:12px}
+.phone .lb .mv{width:34px;font-size:12px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Logo sementara: ganti isi simbol ini dengan ikon Danarakca, semua tempat logo ikut berubah -->
+  <symbol id="logo-mark" viewBox="0 0 34 34"><rect width="34" height="34" rx="9" fill="#E2B33C"/><path d="M8 23 L14 16 L19 19 L26 10" stroke="#0C1F35" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sunmoon" viewBox="0 0 24 24"><g class="i-sun" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g><path class="i-moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="cv-head">
+    <div>
+      <h1>Desain Tampilan Danarakca</h1>
+      <p>Halaman depan, dashboard fasilitator di proyektor, dan layar peserta di HP. Semua layar punya tema gelap dan terang. Angka adalah contoh dari 14 putaran dengan kalibrasi terbaru (sukuk 1,75% per kuartal, saham 50 kartu naik dan 50 turun).</p>
+    </div>
+    <div class="cv-tools">
+      <div class="seg" role="group" aria-label="Tema tampilan Danarakca">
+        <span>Tema</span>
+        <button type="button" data-set="dark" aria-pressed="true">Gelap</button>
+        <button type="button" data-set="light" aria-pressed="false">Terang</button>
+      </div>
+      <div class="legend" aria-label="Warna kelas aset">
+        <span><i style="background:#14875E"></i>Sukuk/SBN</span>
+        <span><i style="background:#2F6FDE"></i>Saham</span>
+        <span><i style="background:#6B7688"></i>RD Pasar Uang</span>
+        <span><i style="background:#B8860B"></i>Emas</span>
+        <span><i style="background:#7C4DDB"></i>RD Campuran</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= 1. HALAMAN DEPAN ================= -->
+  <section class="board" aria-labelledby="b1">
+    <div class="board-head"><h2 id="b1">Halaman depan</h2><small>Desktop 1280 px. Tombol matahari/bulan di kanan atas mengganti tema.</small></div>
+    <div class="scaler" data-w="1280">
+      <div class="frame landing ui" data-ui="dark">
+        <div class="browser" aria-hidden="true"><i></i><i></i><i></i><span>danarakca.site</span></div>
+        <nav class="l-nav">
+          <span class="mark"><svg width="36" height="36" aria-hidden="true"><use href="#logo-mark"/></svg><span>Danarakca<span class="org">DJPPR · Kementerian Keuangan RI</span></span></span>
+          <div class="navr">
+            <button class="themebtn" type="button" aria-label="Ganti tema gelap/terang"><svg width="20" height="20"><use href="#i-sunmoon"/></svg></button>
+            <a href="#b2">Login Admin</a>
+          </div>
+        </nav>
+        <div class="l-hero">
+          <div>
+            <div class="eyebrow">Simulasi investasi interaktif</div>
+            <h1>Uji portofolio Anda di tengah <em>gejolak pasar.</em></h1>
+            <p>Bagi modal Rp100 juta ke lima kelas aset, lalu hadapi kartu skenario makro dari kuartal ke kuartal. Lihat aset mana yang tetap tenang saat krisis datang. Semua hasil adalah simulasi untuk edukasi.</p>
+            <div class="l-cta">
+              <a class="btn btn-gold" href="#b3">Main sekarang <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a class="btn btn-ghost" href="#b2">Login Admin</a>
+            </div>
+            <div class="l-stats">
+              <div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="11" height="15" rx="2"/><path d="M5 7v11a3 3 0 0 0 3 3h8"/></svg><b>100</b><span>kartu skenario</span></div>
+              <div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><b>5</b><span>kelas aset</span></div>
+              <div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>30</b><span>putaran (kuartal)</span></div>
+              <div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg><b>100+</b><span>peserta per sesi</span></div>
+            </div>
+          </div>
+          <div class="hero-vis">
+            <div class="vis-chart">
+              <h4>14 kuartal yang sama, dua nasib berbeda (contoh)</h4>
+              <div class="k"><span><i style="background:var(--c-sukuk)"></i>Sukuk <b>Rp127,5 jt</b></span><span><i style="background:var(--c-saham)"></i>Saham <b>Rp86,1 jt</b></span></div>
+              <div class="chart-box" id="heroChart" style="margin-top:8px"></div>
+            </div>
+            <div class="vis-card back" aria-hidden="true"><div class="scard"><div class="band" style="background:#0E7A55"><span>Fiskal &amp; SBN</span><span class="num">K071</span></div><div class="body"><h3>Rating Indonesia Naik</h3></div></div></div>
+            <div class="vis-card"><div class="scard"><div class="band" style="background:#B4282E"><span>Krisis</span><span class="right"><span class="num">K081</span><span class="why-btn" aria-hidden="true" style="animation:none">!</span></span></div><div class="body"><h3>Pandemi Global</h3><p class="narr" style="font-size:13px">Aktivitas ekonomi terhenti. Saham anjlok, sukuk tetap membayar imbalan.</p></div>
+              <div class="impact"><div><span class="lab"><i style="background:var(--k-sukuk)"></i>Sukuk</span><span class="val k-up">+1,8%</span></div><div><span class="lab"><i style="background:var(--k-saham)"></i>Saham</span><span class="val k-down">−25%</span></div><div><span class="lab"><i style="background:var(--k-rdpu)"></i>RDPU</span><span class="val k-up">+1,3%</span></div><div><span class="lab"><i style="background:var(--k-emas)"></i>Emas</span><span class="val k-up">+8,2%</span></div><div><span class="lab"><i style="background:var(--k-camp)"></i>Camp.</span><span class="val k-down">−11,8%</span></div></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="l-sec board-bg">
+          <div class="sec-head"><h2>Cara bermain</h2><p class="lead">Lima langkah dari masuk sampai juara. Satu putaran = satu kuartal.</p></div>
+          <ol class="howto">
+            <li class="stage" style="--sc:var(--c-saham)">
+              <div class="node"><span class="lv">1</span><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v.01M14 21h.01M17 21h4v-4"/></svg></div>
+              <h3>Pindai &amp; masuk</h3>
+              <p>Scan QR di layar, ketik nama tim, buat PIN.</p>
+              <div class="mini"><span class="fake">Tim Salam</span><span class="fake">PIN&nbsp; ● ● ● ●</span></div>
+            </li>
+            <li class="stage" style="--sc:var(--u-gold-text)">
+              <div class="node"><span class="lv">2</span><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>
+              <h3>Bagi Rp100 juta</h3>
+              <p>Geser slider lima aset. Total selalu 100%.</p>
+              <div class="mini"><div class="stack" aria-hidden="true"><i style="width:20%;background:var(--c-sukuk)"></i><i style="width:30%;background:var(--c-saham)"></i><i style="width:10%;background:var(--c-rdpu)"></i><i style="width:20%;background:var(--c-emas)"></i><i style="width:20%;background:var(--c-camp)"></i></div><span class="mini-cap">20 · 30 · 10 · 20 · 20</span></div>
+            </li>
+            <li class="stage" style="--sc:#E5484D">
+              <div class="node"><span class="lv">3</span><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="11" height="15" rx="2"/><path d="M5 7v11a3 3 0 0 0 3 3h8"/><path d="M14.5 7.5v4M14.5 14.2v.1"/></svg></div>
+              <h3>Hadapi kartu</h3>
+              <p>Kartu skenario keluar tiap putaran. Aset naik atau turun.</p>
+              <div class="mini mini-card"><span class="mc-band">KRISIS · K081</span><b>Pandemi Global</b><span class="mc-row"><span class="k-down">Saham ▼25%</span><span class="k-up">Sukuk ▲1,8%</span></span></div>
+            </li>
+            <li class="stage" style="--sc:var(--c-sukuk)">
+              <div class="node"><span class="lv">4</span><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div>
+              <h3>Atur ulang</h3>
+              <p>Di awal tahap 2 dan 3, susun ulang portofolio.</p>
+              <div class="mini"><span class="tahap"><i class="on">T1</i><em>→</em><i class="on">T2</i><em>→</em><i>T3</i></span></div>
+            </li>
+            <li class="stage" style="--sc:var(--u-gold-text)">
+              <div class="node goal"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></div>
+              <h3>Aset tertinggi menang</h3>
+              <p>Juara dipilih dari total aset di putaran terakhir.</p>
+              <div class="mini podium"><span><b>1</b> Tim Salam</span><span class="num">Rp125 jt</span></div>
+            </li>
+          </ol>
+        </div>
+        <div class="l-sec">
+          <div class="sec-head"><h2>Kenali lima aset</h2><p class="lead">Garis kecil di tiap kartu menunjukkan watak asetnya selama permainan.</p></div>
+          <div class="assets">
+            <div class="asset" style="--ac:var(--c-sukuk)">
+              <div class="a-top"><span class="a-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 18v-7M9.7 18v-7M14.3 18v-7M19 18v-7M12 3l9 5H3z"/></svg></span><span class="a-type">Si Stabil</span></div>
+              <h3>Sukuk/SBN</h3>
+              <svg class="spark" viewBox="0 0 160 48" aria-hidden="true"><polyline points="0,42 20,38 40,35 60,31 80,27 100,23 120,19 140,15 160,11"/></svg>
+              <p>Imbalan tetap 7% per tahun, dijamin negara.</p>
+              <div class="risk"><span class="bars"><i class="f"></i><i></i><i></i><i></i><i></i></span>Risiko rendah</div>
+            </div>
+            <div class="asset" style="--ac:var(--c-saham)">
+              <div class="a-top"><span class="a-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v4M8 16v4M16 3v3M16 12v9"/><rect x="5.5" y="8" width="5" height="8" rx="1"/><rect x="13.5" y="6" width="5" height="6" rx="1"/></svg></span><span class="a-type">Si Liar</span></div>
+              <h3>Saham</h3>
+              <svg class="spark" viewBox="0 0 160 48" aria-hidden="true"><polyline points="0,30 15,8 30,26 45,4 60,40 75,12 90,30 105,18 120,46 135,22 160,36"/></svg>
+              <p>Bisa melonjak atau anjlok tajam dalam satu kuartal.</p>
+              <div class="risk"><span class="bars"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></span>Risiko tinggi</div>
+            </div>
+            <div class="asset" style="--ac:var(--c-rdpu)">
+              <div class="a-top"><span class="a-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2M7 6V4h10v2"/></svg></span><span class="a-type">Si Tenang</span></div>
+              <h3>RD Pasar Uang</h3>
+              <svg class="spark" viewBox="0 0 160 48" aria-hidden="true"><polyline points="0,36 40,33 80,30 120,27 160,24"/></svg>
+              <p>Naik pelan tapi pasti, mirip deposito.</p>
+              <div class="risk"><span class="bars"><i class="f"></i><i></i><i></i><i></i><i></i></span>Risiko rendah</div>
+            </div>
+            <div class="asset" style="--ac:var(--c-emas)">
+              <div class="a-top"><span class="a-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 20l2-5h6l2 5zM11.5 20l2-5h6l2 5zM7 15l2-5h6l2 5z"/></svg></span><span class="a-type">Si Pelindung</span></div>
+              <h3>Emas</h3>
+              <svg class="spark" viewBox="0 0 160 48" aria-hidden="true"><polyline points="0,34 25,33 45,31 58,12 72,22 95,24 115,15 135,20 160,13"/></svg>
+              <p>Melonjak saat krisis dan rupiah melemah.</p>
+              <div class="risk"><span class="bars"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></span>Risiko sedang</div>
+            </div>
+            <div class="asset" style="--ac:var(--c-camp)">
+              <div class="a-top"><span class="a-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.6A9 9 0 0 1 20.4 9H15z"/></svg></span><span class="a-type">Si Seimbang</span></div>
+              <h3>RD Campuran</h3>
+              <svg class="spark" viewBox="0 0 160 48" aria-hidden="true"><polyline points="0,32 15,21 30,29 45,17 60,35 75,22 90,29 105,22 120,36 135,24 160,26"/></svg>
+              <p>Separuh saham, separuh sukuk. Ayunannya setengah.</p>
+              <div class="risk"><span class="bars"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></span>Risiko sedang</div>
+            </div>
+          </div>
+        </div>
+        <footer class="l-foot"><span>Danarakca · Direktorat Jenderal Pengelolaan Pembiayaan dan Risiko, Kementerian Keuangan RI</span><span>Simulasi untuk edukasi, bukan rekomendasi investasi</span></footer>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2. DASHBOARD ADMIN ================= -->
+  <section class="board" aria-labelledby="b2">
+    <div class="board-head"><h2 id="b2">Dashboard admin di proyektor</h2><small>16:9, 1600 × 900. Coba tekan Kocok Kartu, tanda ! di kartu, dan Gulir otomatis di papan peringkat.</small></div>
+    <div class="scaler" data-w="1600">
+      <div class="frame proj ui" data-ui="dark">
+        <div class="pj-top">
+          <span class="mark"><svg width="36" height="36" aria-hidden="true"><use href="#logo-mark"/></svg>Danarakca</span>
+          <div class="pj-kpis">
+            <div class="pj-kpi"><small>Putaran</small><b><span id="pjRound">14</span> <span class="dim">/ 30</span></b></div>
+            <div class="pj-kpi"><small>Waktu simulasi</small><b id="pjTime">Tahun 4 · Q2</b></div>
+            <div class="pj-kpi"><small>Tahap</small><b>2 <span class="dim">dari 3</span></b></div>
+            <div class="pj-kpi"><small>Peserta</small><b>32</b><span class="ok">Alokasi tahap 2: 32/32 masuk</span></div>
+          </div>
+          <div class="pj-actions">
+            <button class="themebtn" type="button" aria-label="Ganti tema gelap/terang"><svg width="20" height="20"><use href="#i-sunmoon"/></svg></button>
+            <button class="pbtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>Batalkan</button>
+            <button class="pbtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Alokasi ditutup</button>
+            <button class="pbtn go" type="button" id="shuffle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>Kocok Kartu</button>
+          </div>
+        </div>
+        <div class="pj-main">
+          <div class="pj-col">
+            <div class="scard" id="pjCard"></div>
+            <div class="pj-panel">
+              <h4>Kartu sebelumnya</h4>
+              <div class="hist" id="pjHist"></div>
+            </div>
+          </div>
+          <div class="pj-col">
+            <div class="pj-panel" style="flex:1">
+              <h4>Perkembangan aset 6 peserta <span>nilai portofolio, juta rupiah</span></h4>
+              <div class="chart-box" id="teamChart"></div>
+              <div class="chart-key" id="teamKey"></div>
+            </div>
+            <div class="pj-panel">
+              <h4>Indeks kelas aset <span>awal = 100</span></h4>
+              <div class="chart-box" id="assetChart"></div>
+              <div class="chart-key" id="assetKey"></div>
+            </div>
+          </div>
+          <div class="pj-col">
+            <div class="pj-panel lb-panel">
+              <h4>Papan peringkat <span>semua 32 peserta</span></h4>
+              <div class="lb-scroll" id="lbScroll" tabindex="0" aria-label="Daftar peringkat, gulir untuk melihat semua peserta">
+                <table class="lb"><thead><tr><th>#</th><th>±</th><th>Peserta</th><th class="rt">Aset (jt)</th><th class="rt">Return</th></tr></thead><tbody id="lbBody"></tbody></table>
+              </div>
+              <div class="lb-foot"><span>Gulir ke bawah untuk peringkat 11–32</span><button type="button" id="autoScroll" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span>Gulir otomatis</span></button></div>
+            </div>
+            <div class="pj-panel">
+              <div class="join">
+                <svg class="qr" viewBox="0 0 29 29" role="img" aria-label="Kode QR tautan peserta (contoh)" id="qr"></svg>
+                <div><small>Gabung dari HP</small><br><b>danarakca.site</b><p>Pindai QR, lalu masuk dengan nama tim yang unik dan PIN 4 angka.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 3. LAYAR PESERTA ================= -->
+  <section class="board" aria-labelledby="b3">
+    <div class="board-head"><h2 id="b3">Layar peserta di HP</h2><small>390 × 844. Contoh peserta: tim "Rina &amp; Fajar", putaran 14. Layar 1, 2, 3 dan 5 bisa dicoba langsung.</small></div>
+    <div class="phones">
+
+      <div class="phone-col">
+        <div class="cap"><b>1. Masuk</b> · nama unik + PIN. Contoh ini menampilkan nama yang sudah dipakai; ketuk saran atau ganti nama.</div>
+        <div class="scaler" data-w="390"><div class="frame phone ui" data-ui="dark">
+          <div class="login-hero">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="mark" style="font-size:19px"><svg width="30" height="30" aria-hidden="true"><use href="#logo-mark"/></svg>Danarakca</span>
+              <button class="themebtn" type="button" aria-label="Ganti tema gelap/terang" style="width:36px;height:36px"><svg width="18" height="18"><use href="#i-sunmoon"/></svg></button>
+            </div>
+            <h2>Siap kelola Rp100 juta?</h2>
+            <p>Ikuti arahan fasilitator di layar utama.</p>
+            <div class="mini-assets" aria-hidden="true"><i style="background:var(--c-sukuk)"></i><i style="background:var(--c-saham)"></i><i style="background:var(--c-rdpu)"></i><i style="background:var(--c-emas)"></i><i style="background:var(--c-camp)"></i></div>
+          </div>
+          <div class="ph-body" style="gap:14px;padding-top:18px">
+            <div class="field"><label for="f-nama">Nama peserta / tim</label><input id="f-nama" value="Tim Salam" autocomplete="off"><span class="hint" id="nameHint">Harus berbeda dari peserta lain di sesi ini</span></div>
+            <div class="dup" id="dupBox" role="status">
+              <span></span>
+              <div class="chips" id="dupChips"></div>
+            </div>
+            <div class="field"><label for="f-pin">PIN 4 angka</label><input id="f-pin" inputmode="numeric" maxlength="4" value="" placeholder="Buat sendiri, contoh 2580"><span class="hint">Dipakai kalau HP mati atau Anda ganti perangkat.</span></div>
+          </div>
+          <div class="ph-foot"><button class="ph-btn" type="button" id="loginBtn">Masuk</button></div>
+        </div></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="cap"><b>2. Alokasi</b> · mulai dari 0%; simpan aktif saat total 100%, lewat 100% aset lain menyesuaikan</div>
+        <div class="scaler" data-w="390"><div class="frame phone ui" data-ui="dark">
+          <div class="ph-head">
+            <div class="row"><span class="mark">Alokasi Tahap 2</span><span class="ph-pill">Rina &amp; Fajar</span></div>
+            <div class="alloc-total">
+              <div class="row"><span style="font-size:13px;color:var(--u-band-muted)">Modal tahap ini</span><b class="num">Rp107,66 jt</b></div>
+              <div class="stack" id="stack" aria-hidden="true"></div>
+              <div class="row"><span class="ok-note" id="allocStatus" role="status">✓ Total 100%</span><span style="font-size:12px;color:var(--u-band-muted)">Sesi dibuka fasilitator</span></div>
+            </div>
+          </div>
+          <div class="ph-body" style="gap:8px;padding-top:12px">
+            <div class="presets" role="group" aria-label="Pilihan cepat">
+              <button type="button" data-p="20,20,20,20,20">Rata</button>
+              <button type="button" data-p="50,0,30,20,0">Konservatif</button>
+              <button type="button" data-p="10,50,0,20,20">Agresif</button>
+            </div>
+            <div class="autonote"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 7h10l-3-3M17 17H7l3 3"/></svg>Semua mulai dari 0%. Kalau total lewat 100%, aset lain otomatis berkurang sebanding.</div>
+            <div id="sliders" style="display:flex;flex-direction:column;gap:7px"></div>
+          </div>
+          <div class="ph-foot"><button class="ph-btn" type="button" id="saveBtn">Simpan Alokasi</button></div>
+        </div></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="cap"><b>3. Kartu putaran</b> · tanda ! membuka alasan tiap aset naik atau turun</div>
+        <div class="scaler" data-w="390"><div class="frame phone ui" data-ui="dark">
+          <div class="ph-head" style="padding-bottom:14px">
+            <div class="row"><span class="mark">Putaran 14</span><span class="ph-pill">Tahun 4 · Q2</span></div>
+          </div>
+          <div class="ph-body">
+            <div class="scard" id="phCard"></div>
+            <div class="mine">
+              <h4>Dampak ke portofolio Anda</h4>
+              <div class="big"><span style="font-weight:600">Kuartal ini</span><b class="num down">−Rp4,76 jt</b></div>
+              <div class="contrib">
+                <div><span><i style="background:var(--c-sukuk)"></i>Sukuk/SBN</span><b class="num up">+0,44 jt</b></div>
+                <div><span><i style="background:var(--c-saham)"></i>Saham</span><b class="num down">−4,56 jt</b></div>
+                <div><span><i style="background:var(--c-rdpu)"></i>RD Pasar Uang</span><b class="num up">+0,13 jt</b></div>
+                <div><span><i style="background:var(--c-emas)"></i>Emas</span><b class="num up">+0,78 jt</b></div>
+                <div><span><i style="background:var(--c-camp)"></i>RD Campuran</span><b class="num down">−1,55 jt</b></div>
+              </div>
+            </div>
+            <div class="wait"><span class="dot" aria-hidden="true"></span>Menunggu kartu berikutnya dari fasilitator</div>
+          </div>
+          <nav class="tabs" aria-label="Menu peserta">
+            <button type="button" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg>Kartu</button>
+            <button type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Portofolio</button>
+            <button type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Peringkat</button>
+          </nav>
+        </div></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="cap"><b>4. Portofolio</b> · peringkat, grafik, dan pembanding 100% sukuk</div>
+        <div class="scaler" data-w="390"><div class="frame phone ui" data-ui="dark">
+          <div class="ph-head" style="padding-bottom:14px">
+            <div class="row"><span class="mark">Portofolio Saya</span><span class="ph-pill">Rina &amp; Fajar</span></div>
+          </div>
+          <div class="ph-body">
+            <div class="rankcard">
+              <div class="pos">#7<small> /32</small></div>
+              <div class="val">Rp109,52 jt</div>
+              <div class="sub"><span style="color:#FF9A9E;font-weight:700">▼ 2 peringkat</span> dari putaran lalu</div>
+            </div>
+            <div class="kpi3">
+              <div><small>Return</small><b class="num up">+9,5%</b></div>
+              <div><small>Max drawdown</small><b class="num down">9,0%</b></div>
+              <div><small>Putaran</small><b class="num">14/30</b></div>
+            </div>
+            <div class="mine" style="gap:4px">
+              <h4>Nilai portofolio, juta rupiah</h4>
+              <div class="chart-box" id="myChart"></div>
+              <div class="chart-key" style="margin-top:2px"><span><i style="background:var(--u-ink)"></i>Anda</span><span><i style="background:var(--c-sukuk)"></i>100% sukuk</span></div>
+            </div>
+            <div class="bench"><span>Jika sejak awal 100% sukuk</span><b class="num">Rp127,50 jt</b></div>
+            <div class="mine" style="gap:8px">
+              <h4>Komposisi saat ini</h4>
+              <div class="stack" aria-hidden="true"><i style="width:23.3%;background:var(--c-sukuk)"></i><i style="width:23.6%;background:var(--c-saham)"></i><i style="width:10.6%;background:var(--c-rdpu)"></i><i style="width:23%;background:var(--c-emas)"></i><i style="width:19.5%;background:var(--c-camp)"></i></div>
+              <div style="font-size:12px;color:var(--u-muted)">Porsi bergeser dari 20/30/10/20/20 karena tiap aset tumbuh berbeda.</div>
+            </div>
+          </div>
+          <nav class="tabs" aria-label="Menu peserta">
+            <button type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg>Kartu</button>
+            <button type="button" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Portofolio</button>
+            <button type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Peringkat</button>
+          </nav>
+        </div></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="cap"><b>5. Peringkat</b> · semua peserta, digulir; posisi sendiri selalu terlihat di atas</div>
+        <div class="scaler" data-w="390"><div class="frame phone ui" data-ui="dark">
+          <div class="ph-head" style="padding-bottom:14px">
+            <div class="row"><span class="mark">Peringkat</span><span class="ph-pill">32 peserta</span></div>
+            <div class="myrow"><span class="num" style="font-size:20px">#7</span><span style="font-weight:700">Rina &amp; Fajar (Anda)</span><span class="num">109,52 jt</span></div>
+          </div>
+          <div class="ph-body" style="padding-top:6px">
+            <table class="lb"><thead><tr><th>#</th><th>±</th><th>Peserta</th><th class="rt">Aset</th><th class="rt">Ret.</th></tr></thead><tbody id="phLb"></tbody></table>
+          </div>
+          <nav class="tabs" aria-label="Menu peserta">
+            <button type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg>Kartu</button>
+            <button type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Portofolio</button>
+            <button type="button" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Peringkat</button>
+          </nav>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="board" aria-labelledby="b4">
+    <div class="board-head"><h2 id="b4">Catatan desain</h2></div>
+    <div class="notes">
+      <div class="note"><h3>Nama unik + PIN, tanpa kode</h3><p>Peserta cukup mengetik nama tim. Kalau nama sudah dipakai, sistem memberi saran nama lain. PIN 4 angka buatan peserta mencegah orang lain memakai nama yang sama, dan memungkinkan masuk lagi kalau HP mati.</p></div>
+      <div class="note"><h3>Slider saling menyesuaikan</h3><p>Saat satu aset dinaikkan, aset lain turun sebanding porsinya (kelipatan 5%). Total selalu 100%, jadi tidak ada lagi input yang ditolak.</p></div>
+      <div class="note"><h3>Tanda ! di setiap kartu</h3><p>Kartu tampil ringkas. Tanda ! membuka alasan logis tiap aset naik atau turun, sehingga fasilitator bisa membacakannya dan peserta bisa membacanya sendiri di HP.</p></div>
+      <div class="note"><h3>Peringkat lengkap</h3><p>Proyektor menampilkan semua peserta dalam daftar yang bisa digulir, dengan mode gulir otomatis untuk layar besar. Di HP, posisi peserta sendiri selalu terlihat di atas daftar.</p></div>
+      <div class="note"><h3>Tema gelap &amp; terang</h3><p>Setiap layar punya dua tema dengan tombol matahari/bulan. Kartu skenario tetap putih di kedua tema, karena bentuknya meniru kartu fisik.</p></div>
+      <div class="note"><h3>Logo menyusul</h3><p>Ikon kuning di semua layar adalah logo sementara. Begitu ikon Danarakca tersedia, cukup diganti di satu tempat.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const fmt=(v,d=1)=>v.toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const sgn=(v,d=1)=>(v>0?'+':v<0?'−':'')+fmt(Math.abs(v),d)+'%';
+  const esc=s=>s.replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+
+  /* ---------- skala bingkai ---------- */
+  const scalers=[...document.querySelectorAll('.scaler')];
+  function fit(){scalers.forEach(s=>{const f=s.firstElementChild;const w=+s.dataset.w;const sc=Math.min(1,s.clientWidth/w);f.style.transform='scale('+sc+')';s.style.height=(f.offsetHeight*sc)+'px';});}
+  if('ResizeObserver' in window){const ro=new ResizeObserver(fit);scalers.forEach(s=>ro.observe(s));}
+  window.addEventListener('resize',fit);
+
+  /* ---------- tema gelap/terang ---------- */
+  const uis=[...document.querySelectorAll('.ui')];
+  let theme='dark';
+  function setTheme(t){theme=t;uis.forEach(u=>u.dataset.ui=t);document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.set===t)));}
+  document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.set)));
+  document.querySelectorAll('.themebtn').forEach(b=>b.addEventListener('click',()=>setTheme(theme==='dark'?'light':'dark')));
+
+  /* ---------- data contoh (14 putaran) ---------- */
+  const teams={"Tim Salam":[100,101.91,102.83,104.38,107.4,108.13,110.09,111.32,113.66,114.81,116.55,117.86,120.79,122.62,124.97],
+   "Tim Wakalah":[100,105.2,104.67,109.21,105.78,112.16,111.35,113.6,112.04,113.89,112.62,115.57,116.81,119.09,117.8],
+   "Tim Ijarah":[100,106.17,104.88,110.16,105.53,112.7,111.24,113.45,111.15,112.81,110.78,113.76,115.13,117.42,115.56],
+   "Rina & Fajar":[100,108.45,106.39,113.93,103.68,115.49,111.78,115,109.44,111.91,107.66,112.08,111.66,114.28,109.52],
+   "Tim Musyarakah":[100,111.76,108.23,118.84,101.85,119.16,112.63,116.9,107.42,110.59,103.45,109.42,107.41,110.48,102.33],
+   "Tim Istishna":[100,113.56,108.87,121.01,100.97,120.34,112.42,116.9,105.7,108.82,100.24,106.55,104.31,107.47,98.01]};
+  const teamVar=["--t1","--t2","--t3","--t4","--t5","--t6"];
+  const idx={"Sukuk/SBN":[100,101.8,103.6,105.4,107.2,109.1,111,112.9,114.9,116.9,118.9,121,123.1,125.3,127.5],
+   "Saham":[100,118,112.1,128.9,96.7,125.7,113.1,119.9,101.9,107,94.2,103.6,97.4,101.3,86.1],
+   "RD Pasar Uang":[100,101.1,102.2,103.3,104.4,105.5,106.7,107.9,109.1,110.3,111.5,112.7,113.9,115.2,116.5],
+   "Emas":[100,103.2,101.3,102.5,110.9,107.8,110.7,109.8,114.4,112.9,114.3,113.4,120.4,121.8,125.7],
+   "RD Campuran":[100,109.7,107.8,116.7,103,119.2,114.1,118.4,110.4,114,108,114.2,111.6,114.7,106.9]};
+  const idxVar={"Sukuk/SBN":"--c-sukuk","Saham":"--c-saham","RD Pasar Uang":"--c-rdpu","Emas":"--c-emas","RD Campuran":"--c-camp"};
+
+  /* ---------- grafik garis SVG (warna dari token tema) ---------- */
+  function line(el,series,colors,o){
+    const W=o.w,H=o.h,pl=o.pl||40,pr=o.pr||16,pt=10,pb=o.pb||26;
+    const all=Object.values(series).flat();const lo=Math.floor(Math.min(...all)/o.step)*o.step,hi=Math.ceil(Math.max(...all)/o.step)*o.step;
+    const n=Object.values(series)[0].length;
+    const x=i=>pl+i*(W-pl-pr)/(n-1),y=v=>pt+(hi-v)*(H-pt-pb)/(hi-lo);
+    let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label}">`;
+    for(let v=lo;v<=hi;v+=o.step){s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--g-grid)" stroke-width="1" ${v===100?'stroke-dasharray="4 4"':''}/>`;s+=`<text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="${o.fs||11}" style="fill:var(--g-tick)" font-family="Oxanium,monospace">${v}</text>`;}
+    if(o.xt){for(let i=0;i<n;i+=o.xt){s+=`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="${o.fs||11}" style="fill:var(--g-tick)" font-family="Oxanium,monospace">${i===0?'Awal':'Q'+i}</text>`;}}
+    Object.entries(series).forEach(([k,arr],j)=>{const c='var('+(colors[k]||colors[j])+')';const pts=arr.map((v,i)=>x(i)+','+y(v)).join(' ');
+      s+=`<polyline points="${pts}" fill="none" style="stroke:${c}" stroke-width="${o.sw?o.sw(k,j):2.5}" stroke-linejoin="round" stroke-linecap="round"/>`;
+      s+=`<circle cx="${x(n-1)}" cy="${y(arr[n-1])}" r="${o.r||4}" style="fill:${c}"/>`;});
+    el.innerHTML=s+'</svg>';
+  }
+  line(document.getElementById('heroChart'),{"Sukuk":idx["Sukuk/SBN"],"Saham":idx["Saham"]},{"Sukuk":"--c-sukuk","Saham":"--c-saham"},{w:560,h:240,step:10,label:"Indeks sukuk dan saham selama 14 kuartal",xt:2,sw:()=>3.5});
+  const tc={};Object.keys(teams).forEach((k,i)=>tc[k]=teamVar[i]);
+  line(document.getElementById('teamChart'),teams,tc,{w:720,h:470,step:5,label:"Nilai portofolio 6 peserta",xt:1,fs:12,sw:(k)=>k==="Rina & Fajar"?4:2.5});
+  document.getElementById('teamKey').innerHTML=Object.keys(teams).map((k,i)=>`<span><i style="background:var(${teamVar[i]})"></i>${esc(k)}</span>`).join('');
+  line(document.getElementById('assetChart'),idx,idxVar,{w:720,h:220,step:10,label:"Indeks lima kelas aset",xt:1,fs:12,sw:(k)=>k==="Sukuk/SBN"||k==="Saham"?3.5:2});
+  document.getElementById('assetKey').innerHTML=Object.keys(idx).map(k=>`<span><i style="background:var(${idxVar[k]})"></i>${k} <b>${fmt(idx[k][14])}</b></span>`).join('');
+  line(document.getElementById('myChart'),{"Anda":teams["Rina & Fajar"],"100% Sukuk":idx["Sukuk/SBN"]},{"Anda":"--u-ink","100% Sukuk":"--c-sukuk"},{w:340,h:150,step:10,label:"Nilai portofolio Rina dan Fajar dibanding 100% sukuk",pl:34,pr:10,pb:8,r:3.5,sw:(k)=>k==="Anda"?3:2});
+
+  /* ---------- papan peringkat: 32 peserta ---------- */
+  const lb=[["Tim Salam",124.97,0],["Tim Mudharabah",121.40,1],["Tim Wakalah",117.80,1],["Tim Ijarah",115.56,1],["Tim Wadiah",113.02,-3],["Tim Qardh",111.25,1],["Rina & Fajar",109.52,-2],["Tim Rahn",106.18,0],["Tim Musyarakah",102.33,1],["Tim Istishna",98.01,-1],
+   ["Tim Murabahah",97.44,2],["Laras & Bima",96.80,-1],["Tim Amanah",96.12,1],["Dimas",95.67,-2],["Tim Barakah",95.03,0],["Tim Kupon",94.48,3],["Putri",93.90,-1],["Tim Nusantara",93.12,0],["Tim Garuda",92.55,-2],["Arief",91.86,1],["Tim Yield",91.20,0],["Sinta",90.47,2],
+   ["Tim Rupiah",89.95,-1],["Tim Kuartal",89.30,0],["Yoga",88.62,1],["Tim Inflasi",88.04,-2],["Nadia",87.35,0],["Tim Bursa",86.71,1],["Hendra",86.02,-1],["Tim Hijrah",85.38,0],["Tim Wakaf",84.79,1],["Tim Tenor",84.20,-1]];
+  const rows=(withCut,me)=>lb.map((r,i)=>{const ret=r[1]-100;const cls=[i<3?'top':'',withCut&&i===10?'cut':'',r[0]===me?'me':''].join(' ').trim();
+    return `<tr class="${cls}"><td class="rk">${i+1}</td><td class="mv ${r[2]>0?'up':r[2]<0?'down':'flat'}">${r[2]>0?'▲'+r[2]:r[2]<0?'▼'+(-r[2]):'–'}</td><td class="nm">${esc(r[0])}</td><td class="v">${fmt(r[1],2)}</td><td class="r ${ret>=0?'up':'down'}">${sgn(ret)}</td></tr>`;}).join('');
+  document.getElementById('lbBody').innerHTML=rows(true,"");
+  document.getElementById('phLb').innerHTML=rows(false,"Rina & Fajar");
+  const sc=document.getElementById('lbScroll'),asb=document.getElementById('autoScroll'),asl=asb.querySelector('span');let timer=null;
+  asb.addEventListener('click',()=>{
+    if(timer){clearInterval(timer);timer=null;asb.setAttribute('aria-pressed','false');asl.textContent='Gulir otomatis';return;}
+    asb.setAttribute('aria-pressed','true');asl.textContent='Berhenti';
+    let pause=0;timer=setInterval(()=>{if(pause>0){pause--;if(pause===0)sc.scrollTop=0;return;}if(sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1){pause=60;return;}sc.scrollTop+=1;},35);
+  });
+
+  /* ---------- kartu skenario dengan tanda ! ---------- */
+  const A5=[["Sukuk","Sukuk/SBN","--k-sukuk"],["Saham","Saham","--k-saham"],["RDPU","RD Pasar Uang","--k-rdpu"],["Emas","Emas","--k-emas"],["Camp.","RD Campuran","--k-camp"]];
+  const deck=[
+   {id:"K045",cat:"Pasar Modal",band:"#1D4E9A",t:"Trading Halt Bursa",n:"Indeks anjlok lebih dari 5% dalam sehari; perdagangan dihentikan sementara.",d:[1.75,-15,1.1,3.2,-6.76],
+    r:["Imbalan tetap 7% per tahun tetap dibayar negara. Gejolak di bursa saham tidak mengubah imbalan sukuk.",
+       "Kepanikan jual membuat harga saham jatuh dalam hingga bursa harus menghentikan perdagangan.",
+       "Dana di deposito dan pasar uang tetap menerima bunga dan tidak terkait harga saham.",
+       "Investor memindahkan dana ke aset aman, sehingga permintaan emas naik.",
+       "Separuh isinya saham ikut jatuh, tetapi separuh sukuk meredam penurunannya."]},
+   {id:"K081",cat:"Krisis",band:"#B4282E",t:"Pandemi Global",n:"Wabah baru menyebar ke seluruh dunia; aktivitas ekonomi terhenti.",d:[1.75,-25,1.3,8.2,-11.76],
+    r:["Imbalan tetap dibayar negara. Saat krisis, surat berharga negara justru dicari sebagai tempat berlindung.",
+       "Pabrik, toko, dan perjalanan berhenti sehingga laba perusahaan anjlok dan harga saham jatuh tajam.",
+       "Bunga deposito tetap berjalan dan sedikit naik karena orang menyimpan uang tunai.",
+       "Emas menjadi aset lindung nilai utama saat ketidakpastian global memuncak.",
+       "Bagian saham jatuh dalam; bagian sukuk menahan agar tidak separah saham."]},
+   {id:"K071",cat:"Fiskal & SBN",band:"#0E7A55",t:"Rating Indonesia Naik",n:"Lembaga pemeringkat menaikkan peringkat utang Indonesia.",d:[1.75,5,1.1,-1.3,3.24],
+    r:["Imbalan tetap dibayar. Kredibilitas SBN dan sukuk makin kuat karena risiko negara dinilai lebih rendah.",
+       "Biaya utang korporasi turun dan investor asing masuk, sehingga harga saham naik.",
+       "Bunga pasar uang stabil; kabar rating tidak banyak mengubah imbal hasilnya.",
+       "Saat optimisme naik, sebagian dana keluar dari aset aman seperti emas.",
+       "Ikut naik karena separuh isinya saham, ditambah imbalan dari porsi sukuk."]}];
+  function cardHTML(c,open,label){
+    return `<div class="band" style="background:${c.band}"><span>${esc(c.cat)}</span><span class="right"><span class="num">${c.id}${label?' · '+label:''}</span><button type="button" class="why-btn" aria-expanded="${open}" aria-label="Lihat alasan naik dan turun tiap aset">!</button></span></div>
+    <div class="body"><h3>${c.t}</h3><p class="narr">${c.n}</p>
+      <div class="reasons" ${open?'':'hidden'}>${c.r.map((t,i)=>`<div><span class="rh"><i style="background:var(${A5[i][2]})"></i>${A5[i][1]}</span><span class="rv ${c.d[i]>=0?'k-up':'k-down'}">${c.d[i]>=0?'▲':'▼'} ${sgn(c.d[i])}</span><p>${t}</p></div>`).join('')}</div>
+      <p class="hint" ${open?'hidden':''}>Tekan tanda ! untuk melihat alasan tiap aset naik atau turun.</p></div>
+    <div class="impact">${c.d.map((v,i)=>`<div><span class="lab"><i style="background:var(${A5[i][2]})"></i>${A5[i][0]}</span><span class="val ${v>=0?'k-up':'k-down'}">${v>=0?'▲':'▼'} ${sgn(v)}</span></div>`).join('')}</div>`;
+  }
+  function wireCard(el){
+    el.addEventListener('click',e=>{const b=e.target.closest('.why-btn');if(!b)return;const open=b.getAttribute('aria-expanded')!=='true';
+      b.setAttribute('aria-expanded',String(open));el.querySelector('.reasons').hidden=!open;el.querySelector('.hint').hidden=open;});
+  }
+  const pj=document.getElementById('pjCard'),ph=document.getElementById('phCard');
+  wireCard(pj);wireCard(ph);
+  ph.innerHTML=cardHTML(deck[0],true,'');
+  const hist=[["Q13","K003 · BI Rate Turun 25 bps",4],["Q12","K046 · Konflik di Timur Tengah",-6],["Q11","K032 · Laba Emiten di Atas Ekspektasi",10],["Q10","K031 · Aksi Jual Asing di Bursa",-12]];
+  let di=0,round=14;
+  function renderPj(){pj.innerHTML=cardHTML(deck[di],false,'Kartu '+round+' / 30');pj.classList.remove('flip');void pj.offsetWidth;pj.classList.add('flip');}
+  function renderHist(){document.getElementById('pjHist').innerHTML=hist.slice(0,4).map(h=>`<div><span class="q">${h[0]}</span><span>${esc(h[1])}</span><span class="s ${h[2]>=0?'up':'down'}">Saham ${h[2]>0?'+':'−'}${Math.abs(h[2])}%</span></div>`).join('');}
+  renderPj();renderHist();
+  document.getElementById('shuffle').addEventListener('click',()=>{
+    const prev=deck[di];hist.unshift(['Q'+round,prev.id+' · '+prev.t,prev.d[1]]);
+    di=(di+1)%deck.length;round=round<30?round+1:30;
+    document.getElementById('pjRound').textContent=round;
+    document.getElementById('pjTime').textContent='Tahun '+(Math.floor((round-1)/4)+1)+' · Q'+((round-1)%4+1);
+    renderPj();renderHist();
+  });
+
+  /* ---------- QR dekoratif (pola contoh) ---------- */
+  (function(){let s='';const m=29;let seed=7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+    const finder=(x,y)=>{s+=`<rect x="${x}" y="${y}" width="7" height="7" fill="#0C1F35"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#0C1F35"/>`};
+    for(let y=0;y<m;y++)for(let x=0;x<m;x++){const inF=(x<8&&y<8)||(x>20&&y<8)||(x<8&&y>20);if(!inF&&rnd()>.52)s+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#0C1F35"/>`;}
+    finder(0,0);finder(22,0);finder(0,22);document.getElementById('qr').innerHTML=s;})();
+
+  /* ---------- login: nama unik + PIN ---------- */
+  const taken=lb.map(r=>r[0].toLowerCase());
+  const nm=document.getElementById('f-nama'),pin=document.getElementById('f-pin'),dup=document.getElementById('dupBox'),chips=document.getElementById('dupChips'),lbtn=document.getElementById('loginBtn');
+  function suggest(base){const out=[];for(const suf of[' 2',' Jakarta',' Muda',' 3']){const c=base+suf;if(!taken.includes(c.toLowerCase()))out.push(c);if(out.length===3)break;}return out;}
+  function checkName(){const v=nm.value.trim();const isDup=!!v&&taken.includes(v.toLowerCase());
+    dup.hidden=!isDup;nm.classList.toggle('bad',isDup);
+    if(isDup){dup.firstElementChild.innerHTML=`<b>Nama "${esc(v)}" sudah dipakai.</b> Kalau ini tim Anda, masukkan PIN yang sama untuk masuk lagi. Kalau bukan, pilih nama lain:`;
+      chips.innerHTML=suggest(v).map(s=>`<button type="button">${esc(s)}</button>`).join('');}
+    document.getElementById('nameHint').textContent=isDup?'Nama sudah dipakai di sesi ini':(v?'✓ Nama tersedia':'Harus berbeda dari peserta lain di sesi ini');
+    lbtn.disabled=!v||!/^\d{4}$/.test(pin.value);
+    lbtn.textContent=isDup?'Masuk dengan PIN tim ini':'Masuk';
+  }
+  chips.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;nm.value=b.textContent;checkName();});
+  nm.addEventListener('input',checkName);pin.addEventListener('input',()=>{pin.value=pin.value.replace(/\D/g,'').slice(0,4);checkName();});
+  checkName();
+
+  /* ---------- slider alokasi: aset lain menyesuaikan ---------- */
+  const A=[["Sukuk/SBN","--c-sukuk"],["Saham","--c-saham"],["RD Pasar Uang","--c-rdpu"],["Emas","--c-emas"],["RD Campuran","--c-camp"]];
+  let val=[0,0,0,0,0];const modal=107.66;
+  const box=document.getElementById('sliders');
+  box.innerHTML=A.map((a,i)=>`<div class="slider"><label for="s${i}"><i style="background:var(${a[1]})"></i>${a[0]}</label><span class="pct" id="p${i}"></span><input type="range" id="s${i}" min="0" max="100" step="5" style="accent-color:var(${a[1]})"><span class="rp" id="r${i}"></span></div>`).join('');
+  function rebalance(i,v){
+    const others=[0,1,2,3,4].filter(k=>k!==i);const target=100-v;const prev=others.reduce((s,k)=>s+val[k],0);
+    if(v+prev<=100){val[i]=v;return;} /* masih ada sisa: cukup isi dari sisa */
+    const raw=others.map(k=>prev>0?val[k]*target/prev:target/others.length);
+    const fl=raw.map(r=>Math.floor(r/5)*5);let rem=target-fl.reduce((a,b)=>a+b,0);
+    const order=raw.map((r,j)=>[r-fl[j],j]).sort((a,b)=>b[0]-a[0]);
+    for(let q=0;rem>0;q=(q+1)%order.length){fl[order[q][1]]+=5;rem-=5;}
+    val[i]=v;others.forEach((k,j)=>val[k]=fl[j]);
+  }
+  function upd(){
+    val.forEach((v,i)=>{document.getElementById('s'+i).value=v;document.getElementById('p'+i).textContent=v+'%';document.getElementById('r'+i).textContent='Rp'+fmt(modal*v/100,2)+' jt';});
+    document.getElementById('stack').innerHTML=val.map((v,i)=>`<i style="width:${v}%;background:var(${A[i][1]})"></i>`).join('');
+    const t=val.reduce((a,b)=>a+b,0),btn=document.getElementById('saveBtn'),st=document.getElementById('allocStatus');
+    if(t===100){st.textContent='✓ Total 100%';st.className='ok-note';btn.disabled=false;btn.textContent='Simpan Alokasi';}
+    else{st.textContent='Sisa '+(100-t)+'% belum dibagi';st.className='ok-note warn';btn.disabled=true;btn.textContent=t===0?'Geser slider untuk mulai':'Bagi sisa '+(100-t)+'% dulu';}
+  }
+  A.forEach((a,i)=>document.getElementById('s'+i).addEventListener('input',e=>{rebalance(i,+e.target.value);upd();}));
+  document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>{val=b.dataset.p.split(',').map(Number);upd();}));
+  document.getElementById('saveBtn').addEventListener('click',e=>{e.currentTarget.textContent='Tersimpan ✓';});
+  upd();
+  fit();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+})();
+</script>
+
+</body>
+</html>
