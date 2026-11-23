@@ -109,6 +109,18 @@ export function assetIndex(drawn) {
   return series;
 }
 
+/** Ringkasan per kelas aset untuk layar edukasi: return total, kuartal negatif, penurunan terdalam, kuartal terburuk & terbaik. */
+export function assetStats(drawn) {
+  const idx = assetIndex(drawn);
+  return ASSETS.map((a, k) => {
+    const s = idx[k];
+    const q = drawn.map(id => cardReturnPct(CARD_BY_ID[id])[k]);
+    return { ...a, series: s, final: s[s.length - 1], ret: s[s.length - 1] / 100 - 1,
+      neg: q.filter(x => x < 0).length, worst: q.length ? Math.min(...q) : 0, best: q.length ? Math.max(...q) : 0,
+      dd: maxDrawdown(s), peak: Math.max(...s), low: Math.min(...s) };
+  });
+}
+
 /** Slider: geser aset i ke v. Kalau total lewat 100%, aset lain dikurangi sebanding (kelipatan 5). */
 export function rebalance(vals, i, v) {
   const val = vals.slice();

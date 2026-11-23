@@ -3,7 +3,7 @@ import { auth, db, signInAnonymously, onAuthStateChanged, doc, getDoc, updateDoc
   arrayUnion, serverTimestamp, hashPin, errText } from './fb.js';
 import { ASSETS, MODAL, ROUNDS_PER_STAGE, CARD_BY_ID, simulate, maxDrawdown, lastCardImpact, rebalance,
   nameKey, cleanName, simTime, fmtJt, fmtPct, validAlloc, effectiveAllocs } from './game.js';
-import { initTheme, THEME_ICON, LOGO, $, esc, cardHTML, wireCard, lineChart, lbRows, podiumHTML, toast, startCountdown } from './ui.js';
+import { initTheme, THEME_ICON, LOGO, $, esc, cardHTML, wireCard, lineChart, lbRows, podiumHTML, toast, startCountdown, howtoHTML, confetti } from './ui.js';
 
 $('#themeBtn').innerHTML = THEME_ICON; $('#logoSlot').innerHTML = LOGO; initTheme();
 
@@ -135,7 +135,7 @@ function render() {
   const stageNow = sess.stage || 1;
   const filled = validAlloc(me.alloc && me.alloc[String(stageNow)]);
   let banner = '';
-  if (sess.status === 'lobby') banner = '<span class="dot"></span> Menunggu fasilitator membuka alokasi tahap 1.';
+  if (sess.status === 'lobby' || sess.status === 'briefing') banner = '<span class="dot"></span> Menunggu fasilitator membuka alokasi tahap 1.';
   else if (sess.status === 'playing' && !validAlloc(me.alloc && me.alloc['1']) ) banner = 'Anda belum mengisi alokasi tahap 1, jadi dana Anda ditaruh 100% di RD Pasar Uang.';
   else if (sess.status === 'playing' && stageNow > 1 && !filled) banner = `Anda tidak mengubah alokasi tahap ${stageNow}, jadi komposisi tahap sebelumnya dipakai lagi.`;
   $('#phaseBanner').hidden = !banner; $('#phaseBanner').innerHTML = banner;
@@ -215,6 +215,8 @@ function renderAlloc(sim) {
 $('#closeEnd').addEventListener('click', () => { $('#popEnd').hidden = true; setTab('tabPorto'); });
 function renderPopups(row, sim) {
   const st = sess.status;
+  $('#popHowto').hidden = st !== 'briefing';
+  if (st === 'briefing' && !$('#phHowto').innerHTML) $('#phHowto').innerHTML = howtoHTML(sess.defaultSeconds || 60, sess.stages);
   $('#popStage').hidden = st !== 'stageEnd';
   if (st === 'stageEnd') {
     $('#popStageTitle').textContent = `Tahap ${sess.stage} selesai!`;
@@ -226,7 +228,8 @@ function renderPopups(row, sim) {
     $('#podium').innerHTML = podiumHTML(board.rows);
     $('#endMine').innerHTML = row ? `Anda finis di peringkat <b>#${row.rank}</b> dari ${board.rows.length} dengan aset <b>Rp${fmtJt(row.v)} jt</b> (${fmtPct(row.ret * 100)}).` : '';
     $('#popEnd').hidden = false;
+    setTimeout(() => confetti(), 2000);
   }
-  if (st !== 'finished') endShown = false;
+  if (st !== 'finished') { endShown = false; $('#popEnd').hidden = true; }
   lastStatus = st;
 }

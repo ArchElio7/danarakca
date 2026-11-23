@@ -1,9 +1,10 @@
 // Danarakca — dashboard fasilitator (layar proyektor).
 import { auth, db, signInWithEmailAndPassword, onAuthStateChanged, signOut, doc, getDoc, setDoc, updateDoc, deleteDoc,
   onSnapshot, collection, query, where, getDocs, serverTimestamp, writeBatch, errText } from './fb.js';
-import { ASSETS, ROUNDS_PER_STAGE, CARD_BY_ID, simulate, leaderboard, assetIndex, pickRandomCard, simTime, fmtJt,
+import { ASSETS, ROUNDS_PER_STAGE, CARD_BY_ID, simulate, leaderboard, assetIndex, assetStats, pickRandomCard, simTime, fmtJt,
   validAlloc } from './game.js';
-import { initTheme, THEME_ICON, LOGO, $, esc, cardHTML, wireCard, lineChart, lbRows, podiumHTML, toast, startCountdown, timerSVG } from './ui.js';
+import { initTheme, THEME_ICON, LOGO, $, esc, cardHTML, wireCard, lineChart, lbRows, podiumHTML, toast, startCountdown, timerSVG,
+  howtoHTML, eduHTML, confetti } from './ui.js';
 
 document.querySelectorAll('.themebtn').forEach(b => { b.innerHTML = THEME_ICON; });
 document.querySelectorAll('.logoSlot').forEach(s => { s.innerHTML = LOGO; });
@@ -44,12 +45,26 @@ async function openList() {
   try {
     const snap = await getDocs(query(collection(db, 'sessions'), where('createdBy', '==', user.uid)));
     const rows = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-    const label = { lobby: 'Menunggu peserta', alloc: 'Alokasi berjalan', playing: 'Sedang main', stageEnd: 'Jeda antar-tahap', finished: 'Selesai' };
-    list.innerHTML = rows.length ? rows.map(r => `<div class="sess"><div><b>${esc(r.name)}</b><small>Kode ${r.id} · ${r.stages} tahap · ${(r.drawn || []).length}/${r.stages * ROUNDS_PER_STAGE} putaran · ${label[r.status] || r.status}</small></div><button class="btn btn-gold" type="button" data-open="${r.id}">Buka</button></div>`).join('')
+    const label = { lobby: 'Menunggu peserta', briefing: 'Penjelasan cara bermain', alloc: 'Alokasi berjalan', playing: 'Sedang main', stageEnd: 'Jeda antar-tahap', finished: 'Selesai' };
+    list.innerHTML = rows.length ? rows.map(r => `<div class="sess"><div><b>${esc(r.name)}</b><small>Kode ${r.id} · ${r.stages} tahap · ${(r.drawn || []).length}/${r.stages * ROUNDS_PER_STAGE} putaran · ${label[r.status] || r.status}</small></div><span class="acts2"><button class="btn" type="button" data-del="${r.id}">Hapus</button><button class="btn btn-gold" type="button" data-open="${r.id}">Buka</button></span></div>`).join('')
       : '<p class="empty">Belum ada sesi. Buat sesi baru di atas.</p>';
   } catch (e) { list.innerHTML = `<p class="msg err">${esc(errText(e))}</p>`; }
 }
-$('#sessList').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) openSession(b.dataset.open); });
+$('#sessList').addEventListener('click', async e => {
+  const o = e.target.closest('[data-open]'); if (o) { openSession(o.dataset.open); return; }
+  const d = e.target.closest('[data-del]'); if (!d) return;
+  if (!d.classList.contains('btn-danger')) { d.classList.add('btn-danger'); d.textContent = 'Yakin hapus?'; setTimeout(() => { if (d.isConnected) { d.classList.remove('btn-danger'); d.textContent = 'Hapus'; } }, 3000); return; }
+  d.disabled = true; d.textContent = 'Menghapus…';
+  try { await deleteSession(d.dataset.del); toast('Sesi dihapus'); } catch (err) { toast(errText(err)); }
+  openList();
+});
+/** Hapus sesi beserta peserta, PIN, dan papan peringkatnya (tidak bisa dibatalkan). */
+async function deleteSession(id) {
+  const refs = [];
+  for (const sub of ['players', 'secrets', 'public']) (await getDocs(collection(db, 'sessions', id, sub))).docs.forEach(d => refs.push(doc(db, 'sessions', id, sub, d.id)));
+  for (let i = 0; i < refs.length; i += 400) { const b = writeBatch(db); refs.slice(i, i + 400).forEach(r => b.delete(r)); await b.commit(); }
+  await deleteDoc(doc(db, 'sessions', id));
+}
 $('#newForm').addEventListener('submit', async e => {
   e.preventDefault(); $('#newErr').hidden = true;
   const name = $('#nName').value.trim().slice(0, 60) || 'Sesi Danarakca';
@@ -116,10 +131,15 @@ function render() {
   $('#kAlloc').textContent = (st === 'alloc' || st === 'lobby' || st === 'playing') && players.length ? `Alokasi tahap ${sess.allocStage || 1}: ${filled}/${players.length}` : '';
   $('#mReg').textContent = sess.regOpen ? 'Tutup pendaftaran' : 'Buka pendaftaran lagi';
   $('#mPodium').hidden = st !== 'finished';
+  $('#stVal').textContent = sess.stages;
+  $('#stVal2').textContent = sess.stages;
+  $('#stMinus').disabled = $('#stMinus2').disabled = sess.stages <= Math.max(1, stage); $('#stPlus').disabled = $('#stPlus2').disabled = sess.stages >= 5;
+  $('#podMore').hidden = !(st === 'finished' && n >= stage * ROUNDS_PER_STAGE && sess.stages < 5);
 
   // tombol utama sesuai fase
   const mb = $('#mainBtn');
-  if (st === 'lobby') { mb.textContent = 'Buka Alokasi Tahap 1'; mb.disabled = false; }
+  if (st === 'lobby') { mb.textContent = 'Lanjut: Cara bermain'; mb.disabled = false; }
+  else if (st === 'briefing') { mb.textContent = 'Mulai Alokasi Tahap 1'; mb.disabled = false; }
   else if (st === 'alloc') { mb.textContent = 'Tutup Alokasi'; mb.disabled = false; }
   else if (st === 'playing') { mb.textContent = `Kocok Kartu (${n + 1})`; mb.disabled = busy || n >= stage * ROUNDS_PER_STAGE; }
   else if (st === 'stageEnd') { mb.textContent = 'Lanjut / Akhiri'; mb.disabled = false; }
@@ -141,10 +161,11 @@ function render() {
   $('#lbBody').innerHTML = rows.length ? lbRows(rows.map(r => ({ ...r, k: r.key })), { cut: 10 }) : '<tr><td colspan="5" class="empty">Belum ada peserta. Tampilkan QR agar peserta bergabung.</td></tr>';
   const top = rows.slice(0, 6);
   lineChart($('#teamChart'), top.map((r, i) => { const p = players.find(x => x.key === r.key); return { values: simulate(p.alloc, drawn).history.map(v => v / 1e6), color: teamVars[i], width: i === 0 ? 4 : 2.5 }; }),
-    { w: 720, h: 380, label: 'Nilai portofolio 6 peserta teratas', xt: true, fs: 12, base: 100 });
+    { w: 720, h: 210, label: 'Nilai portofolio 6 peserta teratas', xt: true, fs: 12, base: 100 });
   $('#teamKey').innerHTML = top.map((r, i) => `<span><i style="background:var(${teamVars[i]})"></i>${esc(r.name)}</span>`).join('');
   const idx = assetIndex(drawn);
-  lineChart($('#assetChart'), idx.map((v, i) => ({ values: v, color: ASSETS[i].cssVar, width: i < 2 ? 3.5 : 2 })), { w: 720, h: 200, label: 'Indeks lima kelas aset', xt: true, fs: 12, base: 100 });
+  lineChart($('#assetChart'), idx.map((v, i) => ({ values: v, color: ASSETS[i].cssVar, width: i < 2 ? 3.5 : 2 })), { w: 720, h: 360, label: 'Indeks lima kelas aset', xt: true, fs: 12, base: 100 });
+  if (!$('#popEdu').hidden) renderEdu();
   $('#assetKey').innerHTML = ASSETS.map((a, i) => `<span><i style="background:var(${a.cssVar})"></i>${a.name} <b>${idx[i][idx[i].length - 1].toLocaleString('id-ID', { maximumFractionDigits: 1 })}</b></span>`).join('');
 
   renderPopups(rows, filled);
@@ -156,6 +177,9 @@ function renderPopups(rows, filled) {
   // lobi
   $('#popLobby').hidden = !(st === 'lobby' && !lobbyDismissed) && !showJoin;
   $('#lobbyOpen').hidden = st !== 'lobby';
+  // cara bermain
+  $('#popHowto').hidden = !(st === 'briefing' || showHowto);
+  if (!$('#popHowto').hidden) { $('#howtoBody').innerHTML = howtoHTML(sess.defaultSeconds || 60, sess.stages); $('#howtoStart').hidden = st !== 'briefing'; $('#howtoBack').textContent = st === 'briefing' ? 'Kembali ke QR' : 'Tutup'; }
   $('#lobbyCount').textContent = players.length;
   $('#lobbyNames').innerHTML = players.slice().sort((a, b) => (a.name > b.name ? 1 : -1)).map(p => `<span>${esc(p.name)}<button type="button" data-kick="${p.key}" aria-label="Keluarkan ${esc(p.name)}">×</button></span>`).join('');
   // alokasi
@@ -180,13 +204,13 @@ function renderPopups(rows, filled) {
   if (st === 'stageEnd') {
     $('#stageTitle').textContent = `Tahap ${sess.stage} selesai!`;
     $('#stageTop3').innerHTML = rows.slice(0, 3).map(r => `<div><span>${r.rank}. ${esc(r.name)}</span><span class="num">Rp${fmtJt(r.v)} jt</span></div>`).join('') || '<div>Belum ada peserta</div>';
-    $('#stageQ').textContent = `Lanjut ke tahap ${sess.stage + 1}? Peserta akan mendapat ${sess.defaultSeconds || 60} detik untuk menyusun ulang portofolio.`;
+    $('#stageQ').textContent = `Lanjut ke tahap ${sess.stage + 1}? Peserta akan mendapat ${sess.defaultSeconds || 60} detik untuk menyusun ulang portofolio. Jumlah tahap masih bisa diubah di bawah.`;
   }
   // podium
-  if (st === 'finished' && !podiumDismissed) { $('#podium').innerHTML = podiumHTML(rows); $('#popPodium').hidden = false; }
+  if (st === 'finished' && !podiumDismissed) { const was = $('#popPodium').hidden; $('#podium').innerHTML = podiumHTML(rows); $('#popPodium').hidden = false; if (was) setTimeout(() => confetti(), 2000); }
   if (st !== 'finished') { $('#popPodium').hidden = true; podiumDismissed = false; }
 }
-let showJoin = false;
+let showJoin = false, showHowto = false;
 $('#lobbyHide').addEventListener('click', () => { lobbyDismissed = true; showJoin = false; render(); });
 $('#mJoin').addEventListener('click', () => { showJoin = true; closeMenu(); render(); });
 $('#podClose').addEventListener('click', () => { podiumDismissed = true; $('#popPodium').hidden = true; });
@@ -202,6 +226,7 @@ $('#lobbyNames').addEventListener('click', async e => {
 /* ---------------- aksi fasilitator ---------------- */
 const upd = data => updateDoc(doc(db, 'sessions', sid), data);
 async function openAlloc(stage) {
+  showHowto = false;
   await upd({ status: 'alloc', stage, allocStage: stage, allocOpen: true, allocOpenedAt: serverTimestamp(), allocSeconds: sess.defaultSeconds || 60 });
   lobbyDismissed = true; showJoin = false;
 }
@@ -226,14 +251,45 @@ async function drawCard() {
 $('#mainBtn').addEventListener('click', async () => {
   const st = sess.status;
   try {
-    if (st === 'lobby') await openAlloc(1);
+    if (st === 'lobby') { await upd({ status: 'briefing' }); lobbyDismissed = true; showJoin = false; }
+    else if (st === 'briefing') await openAlloc(1);
     else if (st === 'alloc') await closeAlloc();
     else if (st === 'playing') await drawCard();
     else if (st === 'stageEnd') { $('#popStage').hidden = false; }
     else { podiumDismissed = false; render(); }
   } catch (e) { toast(errText(e)); }
 });
-$('#lobbyOpen').addEventListener('click', () => openAlloc(1).catch(e => toast(errText(e))));
+$('#lobbyOpen').addEventListener('click', () => upd({ status: 'briefing' }).then(() => { lobbyDismissed = true; showJoin = false; }).catch(e => toast(errText(e))));
+$('#howtoStart').addEventListener('click', () => openAlloc(1).catch(e => toast(errText(e))));
+$('#howtoBack').addEventListener('click', () => { if (sess.status === 'briefing') { lobbyDismissed = false; upd({ status: 'lobby' }).catch(e => toast(errText(e))); } showHowto = false; render(); });
+$('#mHowto').addEventListener('click', () => { closeMenu(); showHowto = true; render(); });
+/* pelajaran: indeks aset layar penuh */
+function renderEdu() {
+  const drawn = sess.drawn || [], st = assetStats(drawn);
+  lineChart($('#eduChart'), st.map((a, i) => ({ values: a.series, color: a.cssVar, width: i < 2 ? 4 : 2.5 })), { w: 1100, h: 380, label: 'Indeks lima kelas aset selama permainan', xt: true, fs: 13, base: 100 });
+  $('#eduKey').innerHTML = st.map(a => `<span><i style="background:var(${a.cssVar})"></i>${a.name} <b>${a.final.toLocaleString('id-ID', { maximumFractionDigits: 1 })}</b></span>`).join('');
+  $('#eduBody').innerHTML = eduHTML(st, drawn.length);
+}
+const openEdu = () => { closeMenu(); renderEdu(); $('#popEdu').hidden = false; };
+$('#eduBtn').addEventListener('click', e => { e.stopPropagation(); openEdu(); });
+$('#assetPanel').addEventListener('click', openEdu);
+$('#mEdu').addEventListener('click', openEdu);
+$('#podEdu').addEventListener('click', () => { podiumDismissed = true; $('#popPodium').hidden = true; openEdu(); });
+$('#eduClose').addEventListener('click', () => { $('#popEdu').hidden = true; });
+/* ubah jumlah tahap saat permainan berjalan */
+async function setStages(nv) {
+  const stage = sess.stage || 1, n = (sess.drawn || []).length, st = sess.status;
+  if (nv < stage || nv > 5) return;
+  const data = { stages: nv };
+  const stageDone = n >= stage * ROUNDS_PER_STAGE;
+  if (stageDone && (st === 'finished' || st === 'stageEnd')) data.status = nv > stage ? 'stageEnd' : 'finished';
+  try { await upd(data); toast(`Jumlah tahap: ${nv}`); } catch (e) { toast(errText(e)); }
+}
+$('#stMinus').addEventListener('click', e => { e.stopPropagation(); setStages(sess.stages - 1); });
+$('#stPlus').addEventListener('click', e => { e.stopPropagation(); setStages(sess.stages + 1); });
+$('#stMinus2').addEventListener('click', () => setStages(sess.stages - 1));
+$('#stPlus2').addEventListener('click', () => setStages(sess.stages + 1));
+$('#podMore').addEventListener('click', () => { podiumDismissed = false; setStages(sess.stages + 1); });
 $('#closeAlloc').addEventListener('click', closeAlloc);
 $('#plus30').addEventListener('click', () => upd({ allocSeconds: (sess.allocSeconds || 60) + 30 }).catch(e => toast(errText(e))));
 $('#stageNext').addEventListener('click', () => openAlloc((sess.stage || 1) + 1).catch(e => toast(errText(e))));

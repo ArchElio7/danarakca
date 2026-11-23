@@ -88,7 +88,8 @@ export function lbRows(rows, { cut = 0, me = '' } = {}) {
 
 /* ---------- popup podium ---------- */
 export function podiumHTML(rows) {
-  const p = i => rows[i] ? `<div class="who">${esc(rows[i].name)}</div><div class="amt">Rp${(rows[i].v / 1e6).toLocaleString('id-ID', { maximumFractionDigits: 2 })} jt</div>` : '<div class="who">–</div>';
+  const ico = i => i === 0 ? TROPHY : i === 1 ? medal(2, '#DCE3EB', '#5B6B80') : medal(3, '#E0A774', '#7A4A1E');
+  const p = i => rows[i] ? `${ico(i)}<div class="who">${esc(rows[i].name)}</div><div class="amt">Rp${(rows[i].v / 1e6).toLocaleString('id-ID', { maximumFractionDigits: 2 })} jt</div>` : '<div class="who">–</div>';
   return `<div class="podium"><div class="p p2">${p(1)}<div class="block">2</div></div><div class="p p1">${p(0)}<div class="block">1</div></div><div class="p p3">${p(2)}<div class="block">3</div></div></div>`;
 }
 
@@ -112,4 +113,58 @@ export function startCountdown(endsAt, onTick) {
 export function timerSVG(left, total) {
   const C = 2 * Math.PI * 70, frac = total > 0 ? left / total : 0;
   return `<svg viewBox="0 0 160 160" aria-hidden="true"><circle class="bg" cx="80" cy="80" r="70"/><circle class="fg" cx="80" cy="80" r="70" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - frac)}"/></svg><b>${left}</b>`;
+}
+
+/* ---------- ikon piala & medali ---------- */
+export const TROPHY = `<svg class="pod-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 8h24v14a12 12 0 0 1-24 0z" fill="#E2B33C" stroke="#8A6400" stroke-width="2"/><path d="M20 12h-8v4a10 10 0 0 0 10 10M44 12h8v4a10 10 0 0 1-10 10" fill="none" stroke="#8A6400" stroke-width="3" stroke-linecap="round"/><path d="M28 34h8v8h-8z" fill="#C9971C"/><path d="M20 50h24v6H20z" fill="#8A6400"/><path d="M24 42h16v8H24z" fill="#E2B33C" stroke="#8A6400" stroke-width="2"/><path d="M27 14l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1z" fill="#FFF3C4" transform="translate(5 -2) scale(.8)"/></svg>`;
+export const medal = (n, fill, rim) => `<svg class="pod-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 4h10l6 16h-10zM44 4H34l-6 16h10z" fill="${n === 2 ? '#3B5BA9' : '#B4282E'}"/><circle cx="32" cy="38" r="18" fill="${fill}" stroke="${rim}" stroke-width="3"/><circle cx="32" cy="38" r="12" fill="none" stroke="${rim}" stroke-width="1.5" opacity=".6"/><text x="32" y="45" text-anchor="middle" font-family="Oxanium,sans-serif" font-weight="800" font-size="20" fill="${rim}">${n}</text></svg>`;
+
+/* ---------- confetti (ringan, tanpa library) ---------- */
+export function confetti(duration = 4500) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = document.createElement('canvas'); c.className = 'confetti'; document.body.appendChild(c);
+  const ctx = c.getContext('2d'); const dpr = window.devicePixelRatio || 1;
+  const fit = () => { c.width = innerWidth * dpr; c.height = innerHeight * dpr; };
+  fit(); addEventListener('resize', fit);
+  const cols = ['#E2B33C', '#3FC48C', '#6EA0FF', '#FF8FA3', '#B08CFF', '#FFFFFF'];
+  const parts = Array.from({ length: 180 }, () => ({ x: Math.random() * innerWidth, y: -20 - Math.random() * innerHeight * .6, w: 6 + Math.random() * 6, h: 8 + Math.random() * 8,
+    vx: -1.5 + Math.random() * 3, vy: 2 + Math.random() * 3.5, r: Math.random() * 6, vr: -.2 + Math.random() * .4, c: cols[(Math.random() * cols.length) | 0] }));
+  const t0 = performance.now();
+  (function frame(t) {
+    ctx.clearRect(0, 0, c.width, c.height);
+    const fade = Math.max(0, 1 - Math.max(0, t - t0 - duration + 1200) / 1200);
+    parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .03; p.r += p.vr;
+      ctx.save(); ctx.globalAlpha = fade; ctx.translate(p.x * dpr, p.y * dpr); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.w * dpr / 2, -p.h * dpr / 2, p.w * dpr, p.h * dpr * Math.abs(Math.cos(p.r))); ctx.restore(); });
+    if (t - t0 < duration) requestAnimationFrame(frame); else { c.remove(); removeEventListener('resize', fit); }
+  })(t0);
+}
+
+/* ---------- cara bermain (dipakai di proyektor & HP) ---------- */
+export function howtoHTML(seconds = 60, stages = 3) {
+  const st = (n, col, ico, t, d) => `<li class="ht-step" style="--sc:${col}"><span class="ht-node"><span class="ht-lv">${n}</span>${ico}</span><b>${t}</b><span>${d}</span></li>`;
+  const I = p => `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  return `<ol class="howto-l">
+    ${st(1, 'var(--c-saham)', I('<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>'), 'Bagi Rp100 juta', `Geser slider lima aset sampai total 100%. Waktunya ${seconds} detik.`)}
+    ${st(2, '#E5484D', I('<rect x="9" y="3" width="11" height="15" rx="2"/><path d="M5 7v11a3 3 0 0 0 3 3h8"/><path d="M14.5 7.5v4M14.5 14.2v.1"/>'), 'Hadapi kartu', 'Tiap putaran = 1 kuartal. Kartu skenario mengubah nilai aset. Tekan ! untuk alasannya.')}
+    ${st(3, 'var(--c-sukuk)', I('<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>'), stages > 1 ? 'Atur ulang' : 'Pantau aset', stages > 1 ? `Setiap 10 kartu, susun ulang portofolio. Ada ${stages} tahap.` : 'Ikuti perkembangan nilai aset di HP Anda selama 10 kuartal.')}
+    ${st(4, 'var(--u-gold-text)', I('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'), 'Aset tertinggi menang', 'Tiga besar naik podium di akhir permainan.')}
+  </ol>
+  <div class="ht-assets">
+    ${ASSETS.map((a, i) => `<span class="ht-a" style="--ac:var(${a.cssVar})"><i></i><b>${a.name}</b><small>${['Imbalan tetap 1,75%/kuartal', 'Naik-turun tajam', 'Naik pelan, stabil', 'Pelindung saat krisis', 'Separuh saham, separuh sukuk'][i]}</small></span>`).join('')}
+  </div>`;
+}
+
+/* ---------- layar edukasi: apa yang terjadi pada tiap aset ---------- */
+export function eduHTML(stats, n) {
+  const f1 = x => x.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const su = stats[0], sa = stats[1];
+  const msg = n
+    ? `Selama ${n} kuartal, <b>sukuk tidak pernah turun</b> dan naik ${fmtPct(su.ret * 100)}. <b>Saham</b> sempat ke indeks ${f1(sa.peak)} dan jatuh sampai ${f1(sa.low)}; turun di ${sa.neg} dari ${n} kuartal dan akhirnya ${fmtPct(sa.ret * 100)}.`
+    : 'Belum ada kartu yang keluar.';
+  return `<p class="edu-msg">${msg}</p>
+  <div class="edu-grid">${stats.map(s => `<div class="edu-a" style="--ac:var(${s.cssVar})">
+    <div class="edu-h"><i></i><b>${s.name}</b><span class="num ${s.ret >= 0 ? 'up' : 'down'}">${fmtPct(s.ret * 100)}</span></div>
+    <dl><div><dt>Kuartal turun</dt><dd class="num">${s.neg}/${n}</dd></div><div><dt>Terburuk</dt><dd class="num ${s.worst < 0 ? 'down' : ''}">${fmtPct(s.worst)}</dd></div><div><dt>Terbaik</dt><dd class="num">${fmtPct(s.best)}</dd></div><div><dt>Penurunan terdalam</dt><dd class="num">${f1(s.dd * 100)}%</dd></div></dl>
+  </div>`).join('')}</div>
+  <p class="edu-foot">Pelajaran: imbal hasil tinggi selalu datang bersama risiko. Sukuk negara memberi hasil pasti dengan risiko paling rendah; saham bisa unggul, tapi bisa juga jatuh dalam. Diversifikasi membantu meredam guncangan.</p>`;
 }

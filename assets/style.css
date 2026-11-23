@@ -152,3 +152,39 @@ a{color:inherit}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--u-up);display:inline-block;animation:pulse 1.6s infinite}
 @keyframes pulse{50%{opacity:.3}}
 @media (prefers-reduced-motion:reduce){.why-btn,.dot,.flip,.podium .block,.podium .who,.podium .amt{animation:none!important}}
+
+/* ===== podium: ikon & confetti ===== */
+.podium .pod-ico{width:56px;height:56px;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+.podium .p1 .pod-ico{width:84px;height:84px;animation-delay:2s}
+.podium .p2 .pod-ico{animation-delay:1.3s}
+.podium .p3 .pod-ico{animation-delay:.6s}
+@keyframes pop{from{opacity:0;transform:scale(.3) translateY(20px)}to{opacity:1;transform:none}}
+.confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:70}
+
+/* ===== cara bermain ===== */
+.howto-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%;position:relative}
+.howto-l::before{content:"";position:absolute;left:12%;right:12%;top:38px;border-top:3px dashed var(--u-input-line)}
+.ht-step{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.ht-node{width:76px;height:76px;border-radius:22px;background:var(--u-surface);border:2.5px solid var(--sc);color:var(--sc);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 0 7px var(--u-surface)}
+.ht-lv{position:absolute;top:-10px;right:-10px;min-width:28px;height:28px;border-radius:999px;background:var(--sc);color:#fff;font-family:var(--f-display);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;border:3px solid var(--u-surface)}
+.ht-step b{font-family:var(--f-display);font-size:19px;margin-top:6px}
+.ht-step span:last-child{font-size:14px;color:var(--u-muted);max-width:26ch}
+.ht-assets{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;width:100%}
+.ht-a{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;border-radius:12px;background:var(--u-surface-2);border:1px solid var(--u-line);border-top:4px solid var(--ac)}
+.ht-a i{display:none}
+.ht-a b{font-family:var(--f-display);font-size:15px}
+.ht-a small{font-size:12.5px;color:var(--u-muted)}
+@media (max-width:700px){.howto-l{grid-template-columns:1fr 1fr}.howto-l::before{display:none}.ht-assets{grid-template-columns:1fr}}
+
+/* ===== layar edukasi ===== */
+.edu-msg{font-size:18px;color:var(--u-ink);margin:0;max-width:80ch;text-align:left}
+.edu-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%}
+.edu-a{background:var(--u-surface-2);border:1px solid var(--u-line);border-top:4px solid var(--ac);border-radius:12px;padding:12px;text-align:left}
+.edu-h{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.edu-h b{font-family:var(--f-display);font-size:15px;flex:1}
+.edu-h .num{font-size:15px}
+.edu-a dl{margin:0;display:flex;flex-direction:column;gap:4px}
+.edu-a dl div{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.edu-a dt{color:var(--u-muted)} .edu-a dd{margin:0}
+.edu-foot{font-size:14px;color:var(--u-muted);margin:0;text-align:left;max-width:90ch}
+@media (max-width:900px){.edu-grid{grid-template-columns:1fr 1fr}}

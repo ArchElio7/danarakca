@@ -67,6 +67,7 @@ body{min-height:100vh;min-height:100dvh}
 .status.ok{color:var(--u-up)} .status.warn{color:var(--u-gold-text)}
 .big-btn{width:100%;min-height:54px;border-radius:14px;border:0;background:var(--gold);color:var(--on-gold);font-weight:800;font-size:17px;font-family:var(--f-display);letter-spacing:.03em}
 .big-btn[disabled]{background:var(--u-track);color:var(--u-muted);cursor:not-allowed}
+#phHowto .howto-l{grid-template-columns:1fr;gap:12px}#phHowto .howto-l::before{display:none}#phHowto .ht-step{flex-direction:row;text-align:left;align-items:center;gap:12px}#phHowto .ht-step b{margin:0;font-size:16px}#phHowto .ht-node{width:52px;height:52px;flex:none;border-radius:16px}#phHowto .ht-node svg{width:26px;height:26px}#phHowto .ht-step{display:grid;grid-template-columns:52px 1fr;grid-template-rows:auto auto;column-gap:12px}#phHowto .ht-node{grid-row:span 2}#phHowto .ht-step span:last-child{max-width:none;font-size:13px}#phHowto .ht-assets{grid-template-columns:1fr 1fr}
 .center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:40px 16px}
 </style>
 </head>
@@ -142,6 +143,14 @@ body{min-height:100vh;min-height:100dvh}
     </div>
     <div class="bot"><button class="big-btn" type="button" id="saveAlloc" disabled>Geser slider untuk mulai</button></div>
   </section>
+
+  <!-- cara bermain saat fasilitator menjelaskan -->
+  <div class="overlay" id="popHowto" hidden><div class="pop" role="dialog" aria-modal="true" aria-labelledby="phHowtoTitle" style="align-items:stretch;text-align:left">
+    <h2 id="phHowtoTitle" style="text-align:center">Cara bermain</h2>
+    <p style="text-align:center">Dengarkan penjelasan fasilitator. Alokasi akan terbuka otomatis di HP ini.</p>
+    <div id="phHowto" style="display:flex;flex-direction:column;gap:14px"></div>
+    <p style="text-align:center;display:flex;gap:8px;justify-content:center;align-items:center"><span class="dot" aria-hidden="true"></span>Menunggu fasilitator memulai</p>
+  </div></div>
 
   <!-- popup tahap selesai / permainan berakhir -->
   <div class="overlay" id="popStage" hidden><div class="pop" role="dialog" aria-modal="true" aria-labelledby="popStageTitle">

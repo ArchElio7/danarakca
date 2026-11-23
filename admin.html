@@ -50,6 +50,14 @@ body{font-size:16px}
 .join b{font-family:var(--f-display);font-size:24px;color:var(--u-gold-text);letter-spacing:.08em}
 .join p{margin:2px 0 0;color:var(--u-muted);font-size:13px;word-break:break-all}
 .empty{color:var(--u-muted);font-size:14px;padding:20px 0;text-align:center}
+.pop.xl{max-width:1200px}
+.linkbtn{background:none;border:0;color:var(--u-gold-text);font-weight:700;font-size:13px;padding:2px 4px;border-radius:6px}
+.click-panel{cursor:zoom-in}
+.menu-stage{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--u-line);margin-bottom:4px;font-weight:600}
+.stepper{display:inline-flex;align-items:center;gap:6px}
+.stepper button{width:34px;height:34px;border-radius:9px;border:1px solid var(--u-line);background:var(--u-surface-2);font-weight:800;font-size:18px;padding:0;text-align:center}
+.stepper b{font-family:var(--f-display);font-size:18px;min-width:18px;text-align:center}
+.sess .acts2{display:flex;gap:8px}
 /* layar masuk & daftar sesi */
 .page{max-width:720px;margin:0 auto;padding:40px max(20px,env(safe-area-inset-right,0px)) 60px max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:18px}
 .page h1{font-family:var(--f-display);font-size:34px;margin:0}
@@ -136,7 +144,10 @@ code{font-family:var(--f-num);background:var(--u-surface-2);padding:2px 6px;bord
       <button class="themebtn" type="button" aria-label="Ganti tema gelap/terang"></button>
       <div class="menu"><button class="btn" type="button" id="menuBtn" aria-expanded="false" aria-haspopup="true">Menu ▾</button>
         <div class="menu-list" id="menuList" hidden>
+          <div class="menu-stage"><span>Jumlah tahap</span><span class="stepper"><button type="button" id="stMinus" aria-label="Kurangi tahap">−</button><b id="stVal">3</b><button type="button" id="stPlus" aria-label="Tambah tahap">+</button></span></div>
           <button type="button" id="mJoin">Tampilkan QR gabung</button>
+          <button type="button" id="mHowto">Tampilkan cara bermain</button>
+          <button type="button" id="mEdu">Tampilkan pelajaran aset</button>
           <button type="button" id="mReg">Tutup pendaftaran</button>
           <button type="button" id="mPodium" hidden>Tampilkan podium</button>
           <button type="button" id="mEnd">Akhiri permainan sekarang</button>
@@ -152,8 +163,8 @@ code{font-family:var(--f-num);background:var(--u-surface-2);padding:2px 6px;bord
       <div class="panel"><h4>Kartu sebelumnya</h4><div class="hist" id="hist"><p class="empty">Belum ada.</p></div></div>
     </div>
     <div class="col mid">
-      <div class="panel" style="flex:1"><h4>Perkembangan aset 6 teratas <span>juta rupiah</span></h4><div class="chart-box" id="teamChart"></div><div class="chart-key" id="teamKey"></div></div>
-      <div class="panel"><h4>Indeks kelas aset <span>awal = 100</span></h4><div class="chart-box" id="assetChart"></div><div class="chart-key" id="assetKey"></div></div>
+      <div class="panel click-panel" style="flex:1" id="assetPanel"><h4>Indeks kelas aset <span>awal = 100 · <button type="button" class="linkbtn" id="eduBtn">⤢ Perbesar &amp; pelajaran</button></span></h4><div class="chart-box" id="assetChart"></div><div class="chart-key" id="assetKey"></div></div>
+      <div class="panel"><h4>Perkembangan aset 6 teratas <span>juta rupiah</span></h4><div class="chart-box" id="teamChart"></div><div class="chart-key" id="teamKey"></div></div>
     </div>
     <div class="col">
       <div class="panel lb-panel"><h4>Papan peringkat <span id="lbCount">0 peserta</span></h4>
@@ -176,7 +187,7 @@ code{font-family:var(--f-num);background:var(--u-surface-2);padding:2px 6px;bord
         <div class="names" id="lobbyNames"></div>
       </div>
     </div>
-    <div class="actions"><button class="btn" type="button" id="lobbyHide">Tutup</button><button class="btn btn-gold go" type="button" id="lobbyOpen">Buka Alokasi Tahap 1</button></div>
+    <div class="actions"><button class="btn" type="button" id="lobbyHide">Tutup</button><button class="btn btn-gold go" type="button" id="lobbyOpen">Lanjut: Cara bermain</button></div>
   </div></div>
 
   <!-- alokasi berjalan -->
@@ -194,6 +205,7 @@ code{font-family:var(--f-num);background:var(--u-surface-2);padding:2px 6px;bord
     <p>Tiga besar sementara:</p>
     <div class="top3" id="stageTop3"></div>
     <p id="stageQ">Mau lanjut ke tahap 2?</p>
+    <div class="menu-stage" style="border:1px solid var(--u-line);border-radius:12px;min-width:300px"><span>Jumlah tahap</span><span class="stepper"><button type="button" id="stMinus2" aria-label="Kurangi tahap">−</button><b id="stVal2">3</b><button type="button" id="stPlus2" aria-label="Tambah tahap">+</button></span></div>
     <div class="actions"><button class="btn" type="button" id="stageEnd">Akhiri permainan</button><button class="btn btn-gold go" type="button" id="stageNext">Lanjut &amp; buka alokasi</button></div>
   </div></div>
 
@@ -201,7 +213,24 @@ code{font-family:var(--f-num);background:var(--u-surface-2);padding:2px 6px;bord
   <div class="overlay" id="popPodium" hidden><div class="pop wide" role="dialog" aria-modal="true" aria-labelledby="podTitle">
     <h2 id="podTitle">Permainan berakhir!</h2>
     <div id="podium" style="width:100%"></div>
-    <div class="actions"><button class="btn" type="button" id="podClose">Tutup</button></div>
+    <div class="actions"><button class="btn" type="button" id="podClose">Tutup</button><button class="btn" type="button" id="podMore" hidden>Tambah 1 tahap lagi</button><button class="btn btn-gold" type="button" id="podEdu">Lihat pelajaran dari permainan</button></div>
+  </div></div>
+
+  <!-- cara bermain (sebelum alokasi tahap 1) -->
+  <div class="overlay" id="popHowto" hidden><div class="pop wide xl" role="dialog" aria-modal="true" aria-labelledby="howtoTitle">
+    <h2 id="howtoTitle">Cara bermain</h2>
+    <p>Modal Rp100 juta · 5 kelas aset · 1 putaran = 1 kuartal · 10 putaran per tahap</p>
+    <div id="howtoBody" style="width:100%;display:flex;flex-direction:column;gap:18px"></div>
+    <div class="actions"><button class="btn" type="button" id="howtoBack">Kembali ke QR</button><button class="btn btn-gold go" type="button" id="howtoStart">Mulai alokasi tahap 1</button></div>
+  </div></div>
+
+  <!-- pelajaran: indeks aset layar penuh -->
+  <div class="overlay" id="popEdu" hidden><div class="pop wide xl" role="dialog" aria-modal="true" aria-labelledby="eduTitle">
+    <h2 id="eduTitle">Apa yang terjadi pada tiap aset?</h2>
+    <div class="chart-box" id="eduChart" style="width:100%"></div>
+    <div class="chart-key" id="eduKey" style="justify-content:center"></div>
+    <div id="eduBody" style="width:100%;display:flex;flex-direction:column;gap:14px;align-items:center"></div>
+    <div class="actions"><button class="btn" type="button" id="eduClose">Tutup</button></div>
   </div></div>
 </section>
 
