@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="id" data-ui="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Danarakca · Fasilitator</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect width='34' height='34' rx='9' fill='%23E2B33C'/%3E%3Cpath d='M8 23 L14 16 L19 19 L26 10' stroke='%230C1F35' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/qrcode.js"></script>
+<style>
+body{font-size:16px}
+.topbar{display:flex;align-items:center;gap:20px;padding:14px max(24px,env(safe-area-inset-right,0px)) 14px max(24px,env(safe-area-inset-left,0px));background:var(--u-band);color:var(--u-band-ink);border-bottom:1px solid var(--u-band-line);flex-wrap:wrap}
+.topbar .mark{font-size:24px}
+.kpis{display:flex;margin-right:auto;flex-wrap:wrap}
+.kpi{padding:0 16px;border-left:1px solid var(--u-band-line);display:flex;flex-direction:column}
+.kpi small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--u-band-muted);font-weight:700;font-family:var(--f-display)}
+.kpi b{font-family:var(--f-display);font-size:22px;font-weight:700;line-height:1.15}
+.kpi .dim{color:var(--u-band-muted);font-size:17px}
+.kpi .sub{font-size:12.5px;font-weight:600;color:var(--u-up)}
+.acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn.go{font-size:17px;min-height:52px;padding:0 22px}
+.menu{position:relative}
+.menu-list{position:absolute;right:0;top:calc(100% + 6px);background:var(--u-surface);border:1px solid var(--u-line);border-radius:12px;padding:6px;min-width:250px;z-index:20;box-shadow:0 20px 40px -16px rgba(0,0,0,.5);display:flex;flex-direction:column}
+.menu-list button{background:none;border:0;text-align:left;padding:10px 12px;border-radius:8px;font-weight:600;color:var(--u-ink)}
+.menu-list button:hover{background:var(--u-surface-2)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,.95fr);gap:18px;padding:18px 24px 24px;height:calc(100vh - 84px);min-height:640px}
+.col{display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0}
+.panel{background:var(--u-surface);border:1px solid var(--u-line);border-radius:16px;padding:16px 20px;min-width:0}
+.panel h4{margin:0 0 10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--u-muted);font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--f-display)}
+.panel h4 span{letter-spacing:0;text-transform:none;font-weight:500;font-family:var(--f-body)}
+#pjCard{flex:1;min-height:0}
+#pjCard .body{flex:1;gap:12px;padding:20px 24px 16px;min-height:0;overflow:auto}
+#pjCard h3{font-size:40px}
+#pjCard .narr{font-size:19px}
+#pjCard .reasons{font-size:15px}
+#pjCard .impact .val{font-size:21px}
+.hist div{display:grid;grid-template-columns:44px 1fr auto;gap:10px;padding:7px 0;border-top:1px solid var(--u-line);align-items:center;font-size:14px}
+.hist div:first-child{border-top:0}
+.hist .q{font-family:var(--f-num);color:var(--u-muted);font-size:13px}
+.hist .s{font-family:var(--f-num);font-weight:700;font-size:13px}
+.lb-panel{flex:1;display:flex;flex-direction:column;min-height:0}
+.lb-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
+.lb-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:var(--u-muted)}
+.lb-foot .btn{min-height:36px;font-size:13px;padding:0 12px}
+.join{display:flex;gap:16px;align-items:center}
+.qr-s{width:96px;height:96px;background:#fff;border-radius:10px;padding:6px;flex:none;overflow:hidden;font-size:7px;color:#0C1F35;word-break:break-all}
+.qr-s svg{width:100%;height:100%;display:block}
+.join b{font-family:var(--f-display);font-size:24px;color:var(--u-gold-text);letter-spacing:.08em}
+.join p{margin:2px 0 0;color:var(--u-muted);font-size:13px;word-break:break-all}
+.empty{color:var(--u-muted);font-size:14px;padding:20px 0;text-align:center}
+/* layar masuk & daftar sesi */
+.page{max-width:720px;margin:0 auto;padding:40px max(20px,env(safe-area-inset-right,0px)) 60px max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:18px}
+.page h1{font-family:var(--f-display);font-size:34px;margin:0}
+.box{background:var(--u-surface);border:1px solid var(--u-line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.box h2{font-family:var(--f-display);font-size:20px;margin:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sess-list{display:flex;flex-direction:column;gap:8px}
+.sess{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--u-line);border-radius:12px;background:var(--u-surface-2)}
+.sess b{font-family:var(--f-display);font-size:17px}
+.sess small{display:block;color:var(--u-muted);font-size:12.5px}
+code{font-family:var(--f-num);background:var(--u-surface-2);padding:2px 6px;border-radius:6px;word-break:break-all}
+/* popup besar untuk proyektor */
+.pop.wide{max-width:900px}
+.lobby{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;text-align:left;width:100%}
+.qr-b{width:260px;height:260px;background:#fff;border-radius:16px;padding:14px;overflow:hidden;font-size:12px;color:#0C1F35;word-break:break-all}
+.qr-b svg{width:100%;height:100%;display:block}
+.lobby .code{font-family:var(--f-display);font-size:56px;font-weight:800;letter-spacing:.1em;color:var(--u-gold-text);line-height:1}
+.names{display:flex;flex-wrap:wrap;gap:6px;max-height:160px;overflow:auto;justify-content:flex-start}
+.names span{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:4px 4px 4px 10px;border-radius:999px;background:var(--u-surface-2);border:1px solid var(--u-line)}
+.names button{border:0;background:none;color:var(--u-muted);width:24px;height:24px;border-radius:50%;font-weight:800}
+.names button.sure{background:var(--u-down);color:#fff;width:auto;padding:0 8px;border-radius:999px;font-size:12px}
+.top3{display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.top3 div{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:10px;background:var(--u-surface-2);font-weight:700}
+@media (max-width:1100px){.grid{grid-template-columns:1fr 1fr;height:auto}.col.mid{grid-column:1/-1;order:3}}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.lobby{grid-template-columns:1fr;justify-items:center;text-align:center}.qr-b{width:200px;height:200px}.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- masuk -->
+<section id="scrLogin" class="page" hidden>
+  <a class="mark" href="./" style="font-size:24px"><span class="logoSlot"></span>Danarakca</a>
+  <h1>Masuk sebagai fasilitator</h1>
+  <form class="box" id="loginForm" novalidate>
+    <div class="field"><label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="username"></div>
+    <div class="field"><label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password"></div>
+    <div class="msg err" id="loginErr" hidden></div>
+    <button class="btn btn-gold" type="submit" id="loginBtn">Masuk</button>
+  </form>
+</section>
+
+<!-- bukan admin -->
+<section id="scrNotAdmin" class="page" hidden>
+  <h1>Akun belum terdaftar sebagai admin</h1>
+  <div class="box">
+    <p style="margin:0">Login berhasil, tetapi akun ini belum diberi hak admin. Lakukan sekali saja di Firebase Console:</p>
+    <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">
+      <li>Buka <b>Firestore Database</b>, klik <b>+ Start collection</b>.</li>
+      <li>Collection ID: <code>admins</code>, lalu Next.</li>
+      <li>Document ID: tempel UID berikut, lalu tambahkan satu field bebas, misalnya <code>nama</code> = nama Anda. Klik Save.</li>
+    </ol>
+    <div class="field"><label for="myUid">UID akun ini</label><input id="myUid" readonly></div>
+    <div class="acts"><button class="btn" type="button" id="copyUid">Salin UID</button><button class="btn btn-gold" type="button" id="recheck">Sudah, cek lagi</button><button class="btn" type="button" id="logout2">Keluar</button></div>
+  </div>
+</section>
+
+<!-- daftar sesi -->
+<section id="scrSessions" class="page" hidden>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><a class="mark" href="./" style="font-size:24px"><span class="logoSlot"></span>Danarakca</a><div class="acts"><button class="themebtn" type="button" aria-label="Ganti tema gelap/terang"></button><button class="btn" type="button" id="logout">Keluar</button></div></div>
+  <h1>Sesi permainan</h1>
+  <form class="box" id="newForm" novalidate>
+    <h2>Buat sesi baru</h2>
+    <div class="field"><label for="nName">Nama sesi</label><input id="nName" maxlength="60" placeholder="Contoh: Literasi Keuangan Kampus X, 5 Des 2026"></div>
+    <div class="row2">
+      <div class="field"><label for="nStages">Jumlah tahap</label><select id="nStages"><option value="1">1 tahap · 10 putaran</option><option value="2">2 tahap · 20 putaran</option><option value="3" selected>3 tahap · 30 putaran</option></select></div>
+      <div class="field"><label for="nSecs">Waktu alokasi</label><select id="nSecs"><option value="45">45 detik</option><option value="60" selected>60 detik</option><option value="90">90 detik</option><option value="120">120 detik</option></select></div>
+    </div>
+    <div class="msg err" id="newErr" hidden></div>
+    <button class="btn btn-gold" type="submit">Buat sesi</button>
+  </form>
+  <div class="box"><h2>Sesi saya</h2><div class="sess-list" id="sessList"><p class="empty">Memuat…</p></div></div>
+</section>
+
+<!-- dashboard proyektor -->
+<section id="scrDash" hidden>
+  <header class="topbar">
+    <span class="mark"><span class="logoSlot"></span>Danarakca</span>
+    <div class="kpis">
+      <div class="kpi"><small>Putaran</small><b><span id="kRound">0</span> <span class="dim" id="kRoundTot">/ 30</span></b></div>
+      <div class="kpi"><small>Waktu simulasi</small><b id="kTime">Awal</b></div>
+      <div class="kpi"><small>Tahap</small><b><span id="kStage">1</span> <span class="dim" id="kStageTot">dari 3</span></b></div>
+      <div class="kpi"><small>Peserta</small><b id="kPlayers">0</b><span class="sub" id="kAlloc"></span></div>
+    </div>
+    <div class="acts">
+      <button class="themebtn" type="button" aria-label="Ganti tema gelap/terang"></button>
+      <div class="menu"><button class="btn" type="button" id="menuBtn" aria-expanded="false" aria-haspopup="true">Menu ▾</button>
+        <div class="menu-list" id="menuList" hidden>
+          <button type="button" id="mJoin">Tampilkan QR gabung</button>
+          <button type="button" id="mReg">Tutup pendaftaran</button>
+          <button type="button" id="mPodium" hidden>Tampilkan podium</button>
+          <button type="button" id="mEnd">Akhiri permainan sekarang</button>
+          <button type="button" id="mBack">Kembali ke daftar sesi</button>
+        </div></div>
+      <button class="btn" type="button" id="undoBtn">Batalkan</button>
+      <button class="btn btn-gold go" type="button" id="mainBtn">Buka Alokasi</button>
+    </div>
+  </header>
+  <div class="grid">
+    <div class="col">
+      <div class="scard" id="pjCard"></div>
+      <div class="panel"><h4>Kartu sebelumnya</h4><div class="hist" id="hist"><p class="empty">Belum ada.</p></div></div>
+    </div>
+    <div class="col mid">
+      <div class="panel" style="flex:1"><h4>Perkembangan aset 6 teratas <span>juta rupiah</span></h4><div class="chart-box" id="teamChart"></div><div class="chart-key" id="teamKey"></div></div>
+      <div class="panel"><h4>Indeks kelas aset <span>awal = 100</span></h4><div class="chart-box" id="assetChart"></div><div class="chart-key" id="assetKey"></div></div>
+    </div>
+    <div class="col">
+      <div class="panel lb-panel"><h4>Papan peringkat <span id="lbCount">0 peserta</span></h4>
+        <div class="lb-scroll" id="lbScroll" tabindex="0" aria-label="Daftar peringkat, gulir untuk melihat semua"><table class="lb"><thead><tr><th>#</th><th>±</th><th>Peserta</th><th class="rt">Aset (jt)</th><th class="rt">Return</th></tr></thead><tbody id="lbBody"></tbody></table></div>
+        <div class="lb-foot"><span>Gulir untuk melihat semua</span><button class="btn" type="button" id="autoScroll" aria-pressed="false">Gulir otomatis</button></div>
+      </div>
+      <div class="panel"><div class="join"><div class="qr-s" id="qrSmall"></div><div><small style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--u-muted);font-weight:700;font-family:var(--f-display)">Gabung dari HP · kode</small><br><b id="codeSmall"></b><p id="urlSmall"></p></div></div></div>
+    </div>
+  </div>
+
+  <!-- lobi: QR besar -->
+  <div class="overlay" id="popLobby" hidden><div class="pop wide" role="dialog" aria-modal="true" aria-labelledby="lobbyTitle">
+    <div class="lobby">
+      <div class="qr-b" id="qrBig"></div>
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+        <h2 id="lobbyTitle" style="text-align:inherit">Pindai untuk bergabung</h2>
+        <p style="text-align:inherit">Atau buka <b id="lobbyUrl" style="color:var(--u-ink);word-break:break-all"></b> dan masukkan kode:</p>
+        <div class="code" id="lobbyCode"></div>
+        <p style="text-align:inherit"><b id="lobbyCount" style="color:var(--u-ink)">0</b> peserta sudah bergabung</p>
+        <div class="names" id="lobbyNames"></div>
+      </div>
+    </div>
+    <div class="actions"><button class="btn" type="button" id="lobbyHide">Tutup</button><button class="btn btn-gold go" type="button" id="lobbyOpen">Buka Alokasi Tahap 1</button></div>
+  </div></div>
+
+  <!-- alokasi berjalan -->
+  <div class="overlay" id="popAlloc" hidden><div class="pop" role="dialog" aria-modal="true" aria-labelledby="allocTitle">
+    <h2 id="allocTitle">Alokasi Tahap 1</h2>
+    <p>Peserta mengatur porsi lima aset di HP masing-masing.</p>
+    <div class="timer" id="timer"></div>
+    <p><b id="allocDone" style="color:var(--u-ink);font-size:22px">0</b> dari <span id="allocTotal">0</span> peserta sudah menyimpan</p>
+    <div class="actions"><button class="btn" type="button" id="plus30">+30 detik</button><button class="btn btn-gold" type="button" id="closeAlloc">Tutup alokasi sekarang</button></div>
+  </div></div>
+
+  <!-- tahap selesai -->
+  <div class="overlay" id="popStage" hidden><div class="pop" role="dialog" aria-modal="true" aria-labelledby="stageTitle">
+    <h2 id="stageTitle">Tahap 1 selesai!</h2>
+    <p>Tiga besar sementara:</p>
+    <div class="top3" id="stageTop3"></div>
+    <p id="stageQ">Mau lanjut ke tahap 2?</p>
+    <div class="actions"><button class="btn" type="button" id="stageEnd">Akhiri permainan</button><button class="btn btn-gold go" type="button" id="stageNext">Lanjut &amp; buka alokasi</button></div>
+  </div></div>
+
+  <!-- podium -->
+  <div class="overlay" id="popPodium" hidden><div class="pop wide" role="dialog" aria-modal="true" aria-labelledby="podTitle">
+    <h2 id="podTitle">Permainan berakhir!</h2>
+    <div id="podium" style="width:100%"></div>
+    <div class="actions"><button class="btn" type="button" id="podClose">Tutup</button></div>
+  </div></div>
+</section>
+
+<script type="module" src="assets/admin.js"></script>
+</body>
+</html>

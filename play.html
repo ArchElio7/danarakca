@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id" data-ui="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Danarakca · Peserta</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect width='34' height='34' rx='9' fill='%23E2B33C'/%3E%3Cpath d='M8 23 L14 16 L19 19 L26 10' stroke='%230C1F35' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+body{min-height:100vh;min-height:100dvh}
+.app{max-width:520px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--u-bg)}
+.head{background:var(--u-band);color:var(--u-band-ink);padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--u-band-line);position:sticky;top:0;z-index:5}
+.head .mark{font-size:19px}
+.head .r{display:flex;gap:8px;align-items:center;min-width:0}
+.pill{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--u-surface-2);color:var(--u-band-ink);border:1px solid var(--u-band-line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.body{flex:1;padding:16px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.hello{background:var(--u-band);color:var(--u-band-ink);padding:26px max(16px,env(safe-area-inset-left,0px)) 24px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--u-band-line)}
+.hello h1{font-family:var(--f-display);font-weight:800;font-size:32px;line-height:1;margin:0}
+.hello p{margin:0;color:var(--u-band-muted);font-size:14px}
+.mini-assets{display:flex;gap:6px}.mini-assets i{flex:1;height:6px;border-radius:3px;display:block}
+.card-box{background:var(--u-surface);border:1px solid var(--u-line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.card-box h4{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--u-muted);font-family:var(--f-display)}
+.big{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.big b{font-size:24px}
+.contrib div{display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid var(--u-line);font-size:14px}
+.contrib div:first-child{border-top:0}
+.contrib span{display:flex;align-items:center;gap:8px}
+.contrib i{width:8px;height:8px;border-radius:2px;display:block}
+.rankcard{background:#0C1F35;color:#fff;border-radius:18px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:2px 16px;align-items:center;border:1px solid #2A4A70}
+.rankcard .pos{font-family:var(--f-display);font-weight:800;font-size:56px;line-height:.9;grid-row:span 2}
+.rankcard .pos small{font-size:18px;color:#A9BBD0;font-weight:600}
+.rankcard .val{font-family:var(--f-num);font-size:24px;font-weight:700}
+.rankcard .sub{font-size:13px;color:#C9D6E5}
+.kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi3 div{background:var(--u-surface);border:1px solid var(--u-line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
+.kpi3 small{font-size:11px;color:var(--u-muted);font-weight:600}
+.kpi3 b{font-size:17px}
+.bench{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;background:var(--u-bench-bg);border:1px solid var(--u-bench-line);color:var(--u-bench-ink);border-radius:12px;padding:10px 12px}
+.banner{display:flex;gap:10px;align-items:center;font-size:13.5px;background:var(--u-surface-2);border:1px solid var(--u-line);border-radius:12px;padding:10px 12px}
+.tabs{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--u-line);background:var(--u-surface);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+.tabs button{border:0;background:none;padding:10px 0 12px;font-size:12px;font-weight:700;color:var(--u-muted);display:flex;flex-direction:column;align-items:center;gap:4px;min-height:56px}
+.tabs button[aria-current="page"]{color:var(--u-ink)}
+.tabs button[aria-current="page"] svg{color:var(--u-gold-text)}
+.myrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--u-me);border:1px solid var(--gold);border-radius:12px;padding:10px 12px;font-size:14px}
+.lb{font-size:14px}.lb td{padding:9px 4px}.lb .r{width:62px;font-size:12px}.lb .mv{width:34px;font-size:12px}
+.scard h3{font-size:26px}.scard .narr{font-size:14.5px}.reasons{font-size:14px}
+/* alokasi */
+.alloc{position:fixed;inset:0;z-index:40;background:var(--u-bg);display:flex;flex-direction:column;max-width:520px;margin:0 auto}
+.alloc .top{background:var(--u-band);color:var(--u-band-ink);padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--u-band-line)}
+.alloc .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.alloc .ttl{font-family:var(--f-display);font-weight:800;font-size:20px}
+.clock{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-display);font-weight:800;font-size:22px;padding:4px 12px;border-radius:999px;background:var(--u-surface-2);border:1px solid var(--u-band-line)}
+.clock.low{color:var(--u-down);border-color:var(--u-down)}
+.alloc .mid{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.alloc .bot{padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--u-line);background:var(--u-bg);display:flex;flex-direction:column;gap:8px}
+.presets{display:flex;gap:8px}
+.presets button{flex:1;min-height:40px;border-radius:10px;border:1px solid var(--u-input-line);background:var(--u-surface);font-weight:700;font-size:13px}
+.slider{display:grid;grid-template-columns:1fr auto;gap:0 10px;align-items:center;background:var(--u-surface);border:1px solid var(--u-line);border-radius:12px;padding:8px 12px 6px}
+.slider label{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
+.slider label i{width:10px;height:10px;border-radius:3px;display:block}
+.slider .pct{font-family:var(--f-num);font-weight:700;font-size:18px}
+.slider .rp{grid-column:1/-1;font-size:12px;color:var(--u-muted)}
+.slider input[type=range]{grid-column:1/-1;width:100%;margin:4px 0;height:28px}
+.status{font-size:13px;font-weight:700}
+.status.ok{color:var(--u-up)} .status.warn{color:var(--u-gold-text)}
+.big-btn{width:100%;min-height:54px;border-radius:14px;border:0;background:var(--gold);color:var(--on-gold);font-weight:800;font-size:17px;font-family:var(--f-display);letter-spacing:.03em}
+.big-btn[disabled]{background:var(--u-track);color:var(--u-muted);cursor:not-allowed}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:40px 16px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <a class="mark" href="./"><span id="logoSlot"></span>Danarakca</a>
+    <div class="r"><span class="pill" id="who" hidden></span><button class="themebtn" type="button" aria-label="Ganti tema gelap/terang" id="themeBtn"></button></div>
+  </header>
+
+  <!-- memuat -->
+  <section id="scrLoad" class="center"><span class="dot" aria-hidden="true"></span><p>Menyambungkan…</p></section>
+
+  <!-- gabung -->
+  <section id="scrJoin" hidden>
+    <div class="hello">
+      <h1>Siap kelola Rp100 juta?</h1>
+      <p id="sessName">Ikuti arahan fasilitator di layar utama.</p>
+      <div class="mini-assets" aria-hidden="true"><i style="background:var(--c-sukuk)"></i><i style="background:var(--c-saham)"></i><i style="background:var(--c-rdpu)"></i><i style="background:var(--c-emas)"></i><i style="background:var(--c-camp)"></i></div>
+    </div>
+    <form class="body" id="joinForm" novalidate>
+      <div class="field" id="codeField" hidden><label for="fCode">Kode sesi</label><input id="fCode" autocomplete="off" autocapitalize="characters" placeholder="Contoh: K7M2Q9" maxlength="8"><span class="hint">Lihat di layar utama, di bawah QR.</span></div>
+      <div class="field"><label for="fName">Nama peserta / tim</label><input id="fName" autocomplete="off" maxlength="24" placeholder="Contoh: Tim Salam"><span class="hint">Harus berbeda dari peserta lain di sesi ini.</span></div>
+      <div class="field"><label for="fPin">PIN 4 angka</label><input id="fPin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="Buat sendiri, contoh 2580"><span class="hint">Ingat PIN ini. Dipakai kalau HP mati atau ganti perangkat.</span></div>
+      <div class="msg err" id="joinErr" hidden><span id="joinErrText"></span><div class="chips" id="joinChips" style="margin-top:8px"></div></div>
+      <button class="big-btn" type="submit" id="joinBtn">Masuk</button>
+    </form>
+  </section>
+
+  <!-- utama -->
+  <main id="scrMain" hidden style="flex:1;display:flex;flex-direction:column">
+    <div class="body" id="tabPorto">
+      <div class="banner" id="phaseBanner" hidden></div>
+      <div class="rankcard"><div class="pos" id="myRank">–<small id="myTotal"></small></div><div class="val" id="myVal">Rp100,00 jt</div><div class="sub" id="myMove">Belum ada putaran</div></div>
+      <div class="kpi3"><div><small>Return</small><b class="num" id="myRet">0,0%</b></div><div><small>Max drawdown</small><b class="num" id="myDD">0,0%</b></div><div><small>Putaran</small><b class="num" id="myRound">0</b></div></div>
+      <div class="card-box"><h4>Nilai portofolio, juta rupiah</h4><div class="chart-box" id="myChart"></div><div class="chart-key"><span><i style="background:var(--u-ink)"></i>Anda</span><span><i style="background:var(--c-sukuk)"></i>Jika 100% sukuk</span></div></div>
+      <div class="bench"><span>Jika sejak awal 100% sukuk</span><b class="num" id="bench">Rp100,00 jt</b></div>
+      <div class="card-box"><h4>Komposisi saat ini</h4><div class="stack" id="myStack" aria-hidden="true"></div><div class="contrib" id="myPos"></div></div>
+    </div>
+    <div class="body" id="tabCard" hidden>
+      <div class="scard" id="curCard"></div>
+      <div class="card-box" id="impactBox" hidden><h4>Dampak ke portofolio Anda</h4><div class="big"><span style="font-weight:600">Kuartal ini</span><b class="num" id="impTotal"></b></div><div class="contrib" id="impRows"></div></div>
+      <p style="font-size:13px;color:var(--u-muted);display:flex;align-items:center;gap:8px;margin:0"><span class="dot" aria-hidden="true"></span><span id="waitText">Menunggu kartu berikutnya dari fasilitator</span></p>
+    </div>
+    <div class="body" id="tabRank" hidden>
+      <div class="myrow"><span class="num" style="font-size:20px" id="rRank">–</span><span style="font-weight:700" id="rName"></span><span class="num" id="rVal"></span></div>
+      <table class="lb"><thead><tr><th>#</th><th>±</th><th>Peserta</th><th class="rt">Aset (jt)</th><th class="rt">Ret.</th></tr></thead><tbody id="rankBody"></tbody></table>
+    </div>
+    <nav class="tabs" aria-label="Menu peserta">
+      <button type="button" data-tab="tabCard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg>Kartu</button>
+      <button type="button" data-tab="tabPorto" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Portofolio</button>
+      <button type="button" data-tab="tabRank"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Peringkat</button>
+    </nav>
+  </main>
+
+  <!-- alokasi -->
+  <section class="alloc" id="allocScr" hidden role="dialog" aria-modal="true" aria-labelledby="allocTitle">
+    <div class="top">
+      <div class="row"><span class="ttl" id="allocTitle">Alokasi Tahap 1</span><span class="clock" id="allocClock" aria-live="polite">60</span></div>
+      <div class="row"><span style="font-size:13px;color:var(--u-band-muted)">Modal tahap ini</span><b class="num" style="font-size:22px" id="allocModal">Rp100,00 jt</b></div>
+      <div class="stack" id="allocStack" aria-hidden="true"></div>
+      <div class="row"><span class="status" id="allocStatus" role="status"></span><span style="font-size:12px;color:var(--u-band-muted)" id="allocSaved"></span></div>
+    </div>
+    <div class="mid">
+      <div class="presets" role="group" aria-label="Pilihan cepat">
+        <button type="button" data-p="20,20,20,20,20">Rata</button>
+        <button type="button" data-p="50,0,30,20,0">Konservatif</button>
+        <button type="button" data-p="10,50,0,20,20">Agresif</button>
+      </div>
+      <button type="button" class="btn" id="usePrev" hidden>Pakai komposisi tahap sebelumnya</button>
+      <p style="font-size:12px;color:var(--u-muted);margin:0">Semua mulai dari 0%. Kalau total lewat 100%, aset lain otomatis berkurang sebanding.</p>
+      <div id="sliders" style="display:flex;flex-direction:column;gap:7px"></div>
+    </div>
+    <div class="bot"><button class="big-btn" type="button" id="saveAlloc" disabled>Geser slider untuk mulai</button></div>
+  </section>
+
+  <!-- popup tahap selesai / permainan berakhir -->
+  <div class="overlay" id="popStage" hidden><div class="pop" role="dialog" aria-modal="true" aria-labelledby="popStageTitle">
+    <h2 id="popStageTitle">Tahap 1 selesai!</h2><p id="popStageText">Menunggu fasilitator memutuskan lanjut ke tahap berikutnya.</p>
+    <div class="rankcard" style="width:100%;text-align:left"><div class="pos" id="psRank">–</div><div class="val" id="psVal"></div><div class="sub">peringkat Anda saat ini</div></div>
+    <span class="dot" aria-hidden="true"></span>
+  </div></div>
+  <div class="overlay" id="popEnd" hidden><div class="pop" role="dialog" aria-modal="true" aria-labelledby="popEndTitle">
+    <h2 id="popEndTitle">Permainan berakhir!</h2>
+    <div id="podium" style="width:100%"></div>
+    <p id="endMine"></p>
+    <button type="button" class="btn" id="closeEnd">Lihat portofolio saya</button>
+  </div></div>
+</div>
+
+<script type="module" src="assets/play.js"></script>
+</body>
+</html>

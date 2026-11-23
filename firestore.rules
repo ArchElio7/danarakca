@@ -1,0 +1,87 @@
+rules_version = '2';
+
+// Aturan keamanan Danarakca.
+// - Admin = akun yang UID-nya terdaftar di koleksi "admins" (dibuat manual di Firebase Console).
+// - Peserta masuk tanpa akun (anonymous). Peserta hanya bisa mendaftarkan namanya sendiri
+//   dan mengubah alokasinya sendiri, hanya saat fasilitator membuka alokasi.
+// - Kartu, putaran, dan papan peringkat hanya bisa diubah admin.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /sessions/{sid} {
+      function sess() { return get(/databases/$(database)/documents/sessions/$(sid)).data; }
+      function secretOf(key) { return /databases/$(database)/documents/sessions/$(sid)/secrets/$(key); }
+
+      allow read: if signedIn();
+      allow create, update, delete: if isAdmin();
+
+      // Papan peringkat yang dihitung admin
+      match /public/{docId} {
+        allow read: if signedIn();
+        allow write: if isAdmin();
+      }
+
+      // PIN peserta (disimpan dalam bentuk hash) dan perangkat yang boleh memakai nama itu
+      match /secrets/{key} {
+        allow read: if isAdmin() || (signedIn() && request.auth.uid in resource.data.owners);
+        allow create: if signedIn()
+          && sess().regOpen == true
+          && request.resource.data.keys().hasOnly(['pin', 'owners'])
+          && request.resource.data.pin is string
+          && request.resource.data.pin.size() == 64
+          && request.resource.data.owners == [request.auth.uid];
+        // Masuk lagi dari perangkat lain: wajib mengirim PIN yang sama
+        allow update: if signedIn()
+          && request.resource.data.pin == resource.data.pin
+          && request.resource.data.keys().hasOnly(['pin', 'owners'])
+          && request.resource.data.owners.size() == resource.data.owners.size() + 1
+          && request.resource.data.owners.hasAll(resource.data.owners)
+          && request.auth.uid in request.resource.data.owners
+          && resource.data.owners.size() < 10;
+        allow delete: if isAdmin();
+      }
+
+      match /players/{key} {
+        function owns() { return request.auth.uid in get(secretOf(key)).data.owners; }
+        function ownsAfter() { return request.auth.uid in getAfter(secretOf(key)).data.owners; }
+        function validAlloc(a) {
+          return a is list && a.size() == 5
+            && a[0] is int && a[1] is int && a[2] is int && a[3] is int && a[4] is int
+            && a[0] >= 0 && a[1] >= 0 && a[2] >= 0 && a[3] >= 0 && a[4] >= 0
+            && a[0] + a[1] + a[2] + a[3] + a[4] == 100;
+        }
+
+        // Alokasi peserta lain tidak bisa diintip; peringkat dibaca dari /public/board
+        allow read: if isAdmin() || (signedIn() && owns());
+        allow create: if signedIn()
+          && sess().regOpen == true
+          && ownsAfter()
+          && request.resource.data.keys().hasOnly(['name', 'alloc', 'joinedAt'])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 24
+          && request.resource.data.alloc is map
+          && request.resource.data.alloc.size() == 0;
+        allow update: if signedIn()
+          && owns()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['alloc'])
+          && sess().allocOpen == true
+          && request.time < sess().allocOpenedAt + duration.value(sess().allocSeconds + 5, 's')
+          && request.resource.data.alloc.diff(resource.data.alloc).affectedKeys().hasOnly([string(sess().allocStage)])
+          && validAlloc(request.resource.data.alloc[string(sess().allocStage)]);
+        allow delete: if isAdmin();
+      }
+    }
+  }
+}
