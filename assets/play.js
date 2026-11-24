@@ -92,13 +92,14 @@ function enterGame() {
   history.replaceState(null, '', '?s=' + sid);
   show('scrMain');
   unsub.forEach(u => u()); unsub = [];
-  unsub.push(onSnapshot(doc(db, 'sessions', sid), s => { sess = s.data({ serverTimestamps: 'estimate' }); render(); }));
+  // papan peringkat ikut di dokumen sesi: satu kiriman per kartu (hemat kuota Firebase)
+  unsub.push(onSnapshot(doc(db, 'sessions', sid), s => { sess = s.data({ serverTimestamps: 'estimate' }); board = sess && sess.board ? sess.board : null; render(); }));
   unsub.push(onSnapshot(doc(db, 'sessions', sid, 'players', key), s => { me = s.exists() ? s.data() : null; if (!s.exists()) { toast('Anda dikeluarkan dari sesi ini.'); } render(); }));
-  unsub.push(onSnapshot(doc(db, 'sessions', sid, 'public', 'board'), s => { board = s.exists() ? s.data() : null; render(); }));
 }
 
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 function setTab(id) {
+  if (id === 'tabCard') $('.tabs [data-tab="tabCard"]').classList.remove('dot');
   ['tabPorto', 'tabCard', 'tabRank'].forEach(t => { $('#' + t).hidden = t !== id; });
   document.querySelectorAll('.tabs button').forEach(b => { if (b.dataset.tab === id) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   window.scrollTo(0, 0);
@@ -144,7 +145,7 @@ function render() {
   const card = n ? CARD_BY_ID[drawn[n - 1]] : null;
   if (n !== lastDrawnLen) {
     $('#curCard').innerHTML = cardHTML(card, { label: n ? `Putaran ${n}` : '' });
-    if (lastDrawnLen >= 0 && n > lastDrawnLen) { $('#curCard').classList.remove('flip'); void $('#curCard').offsetWidth; $('#curCard').classList.add('flip'); setTab('tabCard'); toast('Kartu baru: ' + card.title); }
+    if (lastDrawnLen >= 0 && n > lastDrawnLen) { $('#curCard').classList.remove('flip'); void $('#curCard').offsetWidth; $('#curCard').classList.add('flip'); if ($('#tabCard').hidden) $('.tabs [data-tab="tabCard"]').classList.add('dot'); toast('Kartu baru: ' + card.title); }
     lastDrawnLen = n;
   }
   const imp = n ? lastCardImpact(me.alloc, drawn) : null;

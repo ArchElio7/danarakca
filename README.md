@@ -21,3 +21,9 @@ Simulasi investasi interaktif berbasis kartu skenario (DJPPR, Kementerian Keuang
 
 ## Menambah admin
 Login di `admin.html`, salin UID yang muncul, lalu di Firestore buat dokumen `admins/<UID>`.
+
+## Mode remote (1 fasilitator, 2 perangkat)
+- Laptop/proyektor: buka `admin.html`, pilih sesi → **Buka**.
+- HP fasilitator: Menu → **Kendalikan dari HP** → pindai QR, login admin (atau di daftar sesi tekan **Remote**).
+- Semua kontrol (kocok kartu, alokasi, tahap, podium, layar pelajaran, gulir otomatis) bisa ditekan dari HP; proyektor mengikuti.
+- Papan peringkat disimpan di dokumen sesi (`sessions/{id}.board`), jadi HP peserta hanya menerima satu kiriman per kartu.

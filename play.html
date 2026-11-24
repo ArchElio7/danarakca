@@ -43,6 +43,8 @@ body{min-height:100vh;min-height:100dvh}
 .tabs button{border:0;background:none;padding:10px 0 12px;font-size:12px;font-weight:700;color:var(--u-muted);display:flex;flex-direction:column;align-items:center;gap:4px;min-height:56px}
 .tabs button[aria-current="page"]{color:var(--u-ink)}
 .tabs button[aria-current="page"] svg{color:var(--u-gold-text)}
+.tabs button{position:relative}
+.tabs button.dot::after{content:"";position:absolute;top:8px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--u-down);box-shadow:0 0 0 2px var(--u-surface)}
 .myrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--u-me);border:1px solid var(--gold);border-radius:12px;padding:10px 12px;font-size:14px}
 .lb{font-size:14px}.lb td{padding:9px 4px}.lb .r{width:62px;font-size:12px}.lb .mv{width:34px;font-size:12px}
 .scard h3{font-size:26px}.scard .narr{font-size:14.5px}.reasons{font-size:14px}
